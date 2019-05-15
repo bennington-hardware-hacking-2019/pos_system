@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from controller.api import Controller
+from controller import Controller
 
 
 if __name__== "__main__":
