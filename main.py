@@ -7,7 +7,7 @@ if __name__== "__main__":
     controller = Controller()
     controller.setup()
 
-    if controller.run() == False:
-        print("error")
-    else:
+    if controller.run():
         print("success")
+    else:
+        print("error")
