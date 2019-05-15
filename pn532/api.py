@@ -8,9 +8,6 @@ class PN532(object):
         # i2c device address
         self.address = register.PN532_DEFAULT_ADDRESS
 
-        # setup once initialized
-        self.setup()
-
     def setup(self):
         print("pn532 is setting up")
         
