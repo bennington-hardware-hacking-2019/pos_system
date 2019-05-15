@@ -14,7 +14,11 @@ class Store(object):
 
     def get_items(self, cart):
         print("store is getting items information in the store:", cart)
+        items = {}
 
-        # counter = 0
-        # for item in cart:
-        # return 
+        price = 0
+        for item in cart:
+            price += 1
+            items[item] = price
+
+        return items
