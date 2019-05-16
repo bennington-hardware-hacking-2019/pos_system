@@ -1,20 +1,16 @@
-#!/usr/bin/python3
 from RPi.GPIO import *
 import time
 import json
 
 class Wiegand26:
-    #Reads pin numbers for input pins from JSON
-    #Facility number is also set from JSON
+    # Reads pin numbers for input pins from JSON
+    # Facility number is also set from JSON
     def __init__(self):
-        config = {}
-        with open('config.json', 'r') as config_file:
-            config = json.load(config_file)
-        self.data0 = config["data0"]
-        self.data1 = config["data1"]
-        self.facility = config["facility"]
+        self.data0 = 15
+        self.data1 = 13
+        self.facility = 32
 
-    #Sets data pins to IN
+    # Sets data pins to IN
     def setup(self):
         setwarnings(False)
         setmode(BOARD)
