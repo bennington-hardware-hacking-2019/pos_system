@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import pn532
 import prx_3hc
-import store
+import db
 import payment_processor
 
 
@@ -14,7 +14,7 @@ class Controller(object):
     def __init__(self):
         self.prx_3hc = prx_3hc.PRX_3HC()
         self.pn532 = pn532.PN532()
-        self.store = store.Store()
+        self.db = db.DB()
         self.payment_processor = payment_processor.Payment_Processor()
 
     def setup(self):
@@ -22,7 +22,7 @@ class Controller(object):
 
         self.prx_3hc.setup()
         self.pn532.setup()
-        self.store.setup()
+        self.db.setup()
         self.payment_processor.setup()
 
     def run(self):
@@ -34,8 +34,8 @@ class Controller(object):
         # tap a bennington card to start a check out session
         bennington_card = self.prx_3hc.read()
 
-        # if the card is invalid (not in the store), end the session
-        if not self.store.validate_card(bennington_card):
+        # if the card is invalid (not in the db), end the session
+        if not self.db.validate_card(bennington_card):
             return False
 
         # scan a number of nfc tags and add them to a cart
@@ -49,7 +49,7 @@ class Controller(object):
             return False
 
         # get informations for items in the card and update their status
-        items = self.store.get_items(cart)
+        items = self.db.get_items(cart)
 
         if len(items) == 0:
             return False

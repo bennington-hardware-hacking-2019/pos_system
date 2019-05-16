@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
 
-class Store(object):
+class DB(object):
     def setup(self):
-        print("store is setting up")
+        print("db is setting up")
 
     def validate_card(self, card):
-        print("store is validating:", card)
+        print("db is validating:", card)
         return True
 
     def lookup(self, item):
-        print("store is looking for item in the inventory")
+        print("db is looking for item in the inventory")
 
     def get_items(self, cart):
-        print("store is getting items information in the store:", cart)
+        print("db is getting items information in the store:", cart)
         items = {}
 
         price = 0
