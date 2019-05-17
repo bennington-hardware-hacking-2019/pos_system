@@ -59,6 +59,14 @@ class Controller(object):
         if not self.payment_processor.send_invoice(bennington_card, items):
             return False
 
+        # create a pending transaction
+        # TODO - need to verify transaction once it's paid then update the
+        # database again
+        transaction_id = self.db.create_pending_transaction(bennington_card, items)
+
+        # print out the transaction information
+        print("transaction:", self.db.get_transaction(transaction_id))
+
         # update items status to sold
         self.db.update_sold_items(items)
 
