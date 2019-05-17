@@ -15,7 +15,7 @@ To install necessary development tools:
 make init
 ```
 
-To setup postgres with pre=populated data (mainly used to testing):
+To setup postgres with pre-populated data (mainly used for testing):
 ```
 make db-setup
 ```
