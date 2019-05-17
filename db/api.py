@@ -14,26 +14,58 @@ class DB(object):
         """FIXME"""
         print("db is setting up")
 
-    def validate_card(self, card):
-        """FIXME"""
-        print("db is validating:", card)
+    def validate_card(self, nfc_card):
+        """check if the card exists in the store"""
+        print("db is validating:", nfc_card)
+        if self.get_card(nfc_card) is None:
+            print("db failed to validate:", nfc_card)
+            return False
+
+        print("db successfully validated:", nfc_card)
         return True
 
-    def lookup(self, item):
-        """FIXME"""
-        print("db is looking for item in the inventory")
+    def get_card(self, nfc_card):
+        """get a card information"""
+        cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute("SELECT * FROM account WHERE nfc_card = %s;", (nfc_card,))
+        result = cur.fetchone()
+        cur.close()
 
-    def get_items(self, cart):
-        """FIXME"""
+        return result
+
+    def get_available_items(self, cart):
+        """return a map of item information from the cart
+           format:
+             <nfc_tag>: {"item":<item>, "description":<description", "price":<price"}}
+        """
         print("db is getting items information in the store:", cart)
-        items = {}
+        d = {}
+        for i in cart:
+            item = self.get_available_item(i)
+            try:
+                d[item.get("nfc_tag")] = {
+                        "item": item.get("item"),
+                        "description": item.get("description"),
+                        "price": float(item.get("price"))
+                }
+            except AttributeError as e:
+                print("failed to retrive item information:", e)
 
-        price = 0
-        for item in cart:
-            price += 1
-            items[item] = price
+        return d
 
-        return items
+    def get_available_item(self, nfc_tag):
+        """get item informations for a available item"""
+        cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute("SELECT * FROM inventory WHERE nfc_tag = %s AND status = %s;", (nfc_tag, "available",))
+        result = cur.fetchone()
+        cur.close()
+
+        return result
+    
+    def update_sold_items(self, items):
+        """update items status to sold"""
+        for item in items:
+            self.update_item_status(item, "sold")
 
     def update_item_status(self, nfc_tag, status):
         """update item status to either available or sold"""
