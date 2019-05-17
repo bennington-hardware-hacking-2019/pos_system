@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+import uuid
 import psycopg2
 import psycopg2.extras
 from psycopg2 import sql
@@ -49,7 +51,8 @@ class DB(object):
                         "price": float(item.get("price"))
                 }
             except AttributeError as e:
-                print("failed to retrive item information:", e)
+                # if the tag is None, there is nothing we really do here
+                pass
 
         return d
 
@@ -85,4 +88,33 @@ class DB(object):
         cur.execute("SELECT status FROM inventory WHERE nfc_tag = %s;", (nfc_tag,))
         result = cur.fetchone()
         cur.close()
+
         return result["status"]
+
+    def create_pending_transaction(self, card, items):
+        """create a pending transaction for purchasing items"""
+        # FIXME - this generates a random uuid, but not sure if this is how we
+        # should use it though
+        transaction_id = str(uuid.uuid4())
+        bennington_id = int(self.get_card(card).get("bennington_id"))
+        date_added = datetime.datetime.now()
+
+        cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+        for nfc_tag in items:
+            cur.execute("INSERT INTO transaction (transaction_id, bennington_id, nfc_tag, date_added, status) VALUES (%s, %s, %s, %s, %s);",
+                    (transaction_id, bennington_id, nfc_tag, date_added, "pending"))
+
+        self.conn.commit()
+        cur.close()
+
+        return transaction_id
+
+    def get_transaction(self, id):
+        """get transaction information for a given transaction id"""
+        cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute("SELECT * FROM transaction WHERE transaction_id = %s;", (id,))
+        result = cur.fetchall()
+        cur.close()
+
+        return result
