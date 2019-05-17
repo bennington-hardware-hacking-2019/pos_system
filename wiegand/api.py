@@ -1,6 +1,6 @@
 from RPi.GPIO import *
 import time
-import json
+import exceptions
 
 class Wiegand26:
     # Reads pin numbers for input pins from JSON
@@ -17,37 +17,30 @@ class Wiegand26:
         setup(self.data0, IN)
         setup(self.data1, IN)
 
-    # When Card returns wrong Facility 
-    class FacilityError(Exception):
-        pass
-
-    # When Card returns wrong bit parity  
-    class ReadError(Exception):
-        pass
-
     # Loops until Card is detected and returns ID value
     def read(self):
-        start = time.time()
         capture = ''
         while True:
+
             if input(self.data0) == LOW:
                 capture += '0'
                 time.sleep(.0001)
-                start = time.time()
+
             elif input(self.data1) == LOW:
                 capture += '1'
                 time.sleep(.0001)
-                start = time.time()
+
             # Evaluates to true if there are no incoming bits
-            elif time.time() - start > .5 and capture != '':
+            elif capture != '':
+
                 # Throws error if one side has the wrong parity
                 if int(capture[1:9], 2) != 32:
-                    raise self.FacilityError
+                    raise exceptions.FacilityError
 
                 # Throws error if one side has the wrong parity
                 if capture[0:13].count('1') % 2 != 0 or \
                    capture[13:26].count('1') % 2 == 0:
-                    raise self.ReadError
+                    raise exceptions.ReadError
 
                 return int(capture[11:25], 2)
 
