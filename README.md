@@ -19,7 +19,7 @@ To setup postgres with pre=populated data (mainly used to testing):
 ```
 make db-setup
 ```
-> Run `python3 main.py` to simulate a simple flow.
+> Use `make run` to simulate a simple flow.
 
 To run test
 ```
