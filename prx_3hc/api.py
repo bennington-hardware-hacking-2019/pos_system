@@ -3,7 +3,9 @@
 
 class PRX_3HC(object):
     def setup(self):
+        """FIXME"""
         print("prx_3hc is setting up")
         
     def read(self):
-        return "prx_3hc sample reading"
+        """FIXME"""
+        return 10000

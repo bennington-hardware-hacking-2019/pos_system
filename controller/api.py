@@ -39,6 +39,7 @@ class Controller(object):
             return False
 
         # scan a number of nfc tags and add them to a cart
+        # FIXME - run sequentially, get 3 items for now
         cart = []
         for i in range(3):
             cart.append(self.pn532.read())
@@ -48,14 +49,22 @@ class Controller(object):
         if not bennington_card == self.prx_3hc.read():
             return False
 
-        # get informations for items in the card and update their status
-        items = self.db.get_items(cart)
+        # get informations for available items in the cart
+        items = self.db.get_available_items(cart)
 
         if len(items) == 0:
             return False
 
         # send an invoice to the person
         if not self.payment_processor.send_invoice(bennington_card, items):
+            return False
+
+        # update items status to sold
+        self.db.update_sold_items(items)
+
+        # check the availability of the item in the cart again
+        # since all of them are sold, there should be no item left to be purchased
+        if len(self.db.get_available_items(cart)) != 0:
             return False
 
         return True
