@@ -25,6 +25,5 @@ CREATE TABLE IF NOT EXISTS transaction (
   nfc_tag INT UNIQUE NOT NULL,
   bennington_id INT UNIQUE NOT NULL,
   date_added TIMESTAMP NOT NULL,
-  date_paid TIMESTAMP NOT NULL,
-  status VARCHAR(20) NOT NULL,
-  PRIMARY KEY (transaction_id));
+  date_paid TIMESTAMP NULL,
+  status VARCHAR(20) NOT NULL);
