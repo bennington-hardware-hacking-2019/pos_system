@@ -51,9 +51,3 @@ class Wiegand26:
 
                 return int(capture[11:25], 2)
 
-# Check a single card's ID
-if __name__ == "__main__":
-    wiegand = Wiegand26()
-    wiegand.setup()
-    print("Card Number: " + str(wiegand.read()))
- 
