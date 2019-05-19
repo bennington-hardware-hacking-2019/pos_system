@@ -43,8 +43,3 @@ class Wiegand26:
                     raise exceptions.ReadError
 
                 return int(capture[11:25], 2)
-
-if __name__ == "__main__":
-    test = Wiegand26()
-    test.setup()
-    print(test.read())
