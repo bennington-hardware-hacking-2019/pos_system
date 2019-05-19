@@ -25,20 +25,6 @@ class Controller(object):
         self.store.setup()
         self.payment_processor.setup()
 
-    
-    def get_card(self):
-        """function handles exceptions. this will probably be deleted later
-           but it illustrates how the errors work
-        """
-        try:
-            return self.wiegand.read()
-        except FacilityError:
-            print("Please use a Bennington Card")
-            return self.get_card()
-        except ReadError:
-            print("Read Error: Please try again")
-            return self.get_card()
-
     def run(self):
         """run the system sequentially (only for demo purposes)
            return False whenever an error is occured to end the session
@@ -46,10 +32,7 @@ class Controller(object):
         print("controller is running")
 
         # tap a bennington card to start a check out session
-
-        bennington_card = self.get_card()
-        # What was here before ^^^^
-        ##bennington_card = self.wiegand.read()
+        bennington_card = self.wiegand.read()
 
         # if the card is invalid (not in the store), end the session
         if not self.store.validate_card(bennington_card):

@@ -31,7 +31,7 @@ class Wiegand26:
                 time.sleep(.0001)
 
             # Evaluates to true if there are no incoming bits
-            elif capture != '':
+            elif len(capture) == 26:
 
                 # Throws error if one side has the wrong parity
                 if int(capture[1:9], 2) != 32:
