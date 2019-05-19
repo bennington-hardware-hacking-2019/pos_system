@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS buyer (
 
 CREATE TABLE IF NOT EXISTS admin (
   index SERIAL NOT NULL,
-  bennington_id INT NOT NULL,
+  bennington_id INT UNIQUE NOT NULL,
   super_admin BOOLEAN,
   PRIMARY KEY (bennington_id));
 
