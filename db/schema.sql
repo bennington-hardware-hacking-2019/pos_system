@@ -34,4 +34,4 @@ CREATE TABLE IF NOT EXISTS purchase (
   bennington_id INT UNIQUE NOT NULL,
   date_added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   date_paid TIMESTAMP,
-  PRIMARY KEY (index));;
+  PRIMARY KEY (index));
