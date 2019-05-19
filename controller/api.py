@@ -12,7 +12,7 @@ import payment_processor
 
 class Controller(object):
     def __init__(self):
-        self.wiegand = wiegand.Wiegand26()
+        self.wiegand = wiegand.Wiegand()
         self.pn532 = pn532.PN532()
         self.db = db.DB()
         self.payment_processor = payment_processor.Payment_Processor()

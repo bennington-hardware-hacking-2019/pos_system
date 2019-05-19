@@ -1,11 +1,7 @@
-# Exceptions for Wiegand 26 Bit Object
-
-# When Card returns wrong Facility 
+# when card returns wrong facility 
 class FacilityError(Exception):
     pass
 
-# When Card returns wrong bit parity  
+# when card returns wrong bit parity  
 class ReadError(Exception):
     pass
-
-
