@@ -5,14 +5,14 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pn532
-import prx_3hc
-import db
+import wiegand
+import store
 import payment_processor
 
 
 class Controller(object):
     def __init__(self):
-        self.prx_3hc = prx_3hc.PRX_3HC()
+        self.wiegand = wiegand.Wiegand26()
         self.pn532 = pn532.PN532()
         self.db = db.DB()
         self.payment_processor = payment_processor.Payment_Processor()
@@ -20,7 +20,7 @@ class Controller(object):
     def setup(self):
         print("controller is setting up")
 
-        self.prx_3hc.setup()
+        self.wiegand.setup()
         self.pn532.setup()
         self.db.setup()
         self.payment_processor.setup()
@@ -32,7 +32,7 @@ class Controller(object):
         print("controller is running")
 
         # tap a bennington card to start a check out session
-        bennington_card = self.prx_3hc.read()
+        bennington_card = self.wiegand.read()
 
         # if the card is invalid (not in the db), end the session
         if not self.db.validate_card(bennington_card):
@@ -46,7 +46,7 @@ class Controller(object):
 
         # tap the bennington card again to end the checkout session
         # if the card is not the same card as before, end the session
-        if not bennington_card == self.prx_3hc.read():
+        if not bennington_card == self.wiegand.read():
             return False
 
         # get informations for available items in the cart
