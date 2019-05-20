@@ -1,6 +1,6 @@
 /* pre-populated data */
 
-INSERT INTO "account" VALUES (DEFAULT, 28640, 10000, 'hoanh', 'hoanhan@bennington.edu', 'admin');
+INSERT INTO "account" VALUES (DEFAULT, 28640, 7114, 'hoanh', 'hoanhan@bennington.edu', 'admin');
 
 INSERT INTO "inventory" VALUES (DEFAULT, current_timestamp, 100, 'sample item 1', 'sample description 1', 'available', 1.11);
 INSERT INTO "inventory" VALUES (DEFAULT, current_timestamp, 200, 'sample item 2', 'sample description 2', 'available', 2.33);
