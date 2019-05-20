@@ -2,24 +2,25 @@
 
 from RPi.GPIO import *
 import time
-import exceptions
+
+from . import exceptions
 
 rest = .0001
 
 
 class Wiegand(object):
     def __init__(self):
-        # set data line 0 to be input from pin 13
-        self.data0 = 13
+        # set data line 0 to be input from pin 18
+        self.data0 = 18
 
-        # set data line 1 to be input from pin 15
-        self.data1 = 15
+        # set data line 1 to be input from pin 22
+        self.data1 = 22
 
-        # falicity code is set to be 32 for our use case
+        # facility code is set to be 32 for our use cases
         self.facility = 32
 
     def setup(self):
-        """set data pins to input pins"""
+        """set data pin to input pin"""
         setwarnings(False)
         setmode(BOARD)
 
@@ -38,10 +39,10 @@ class Wiegand(object):
                 capture += '1'
                 time.sleep(rest)
 
-            # Evaluates to true if there are no incoming bits
+            # evaluates to true if there are no incoming bits
             elif len(capture) == 26:
-                # throws error if one side has the wrong parity
-                if int(capture[1:9], 2) != 32:
+                # throws error if the facility code doesn't match
+                if int(capture[1:9], 2) != self.facility:
                     raise exceptions.FacilityError
 
                 # throws error if one side has the wrong parity
@@ -51,3 +52,7 @@ class Wiegand(object):
 
                 # return an integer representation of an array of bits
                 return int(capture[11:25], 2)
+
+    def simulate_read(self):
+        """simulate reading, only used for testing purposes"""
+        return 10000
