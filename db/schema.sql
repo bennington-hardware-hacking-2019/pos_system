@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS item (
 	sale_index INT,
 	PRIMARY KEY (nfc_tag));
 
+-- What if an nfc_tag is reused? Or perhaps an item is returned?
+
 CREATE TABLE IF NOT EXISTS stock (
 	index SERIAL NOT NULL,
 	item_index INT NOT NULL,
