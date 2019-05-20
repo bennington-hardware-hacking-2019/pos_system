@@ -6,7 +6,7 @@ import stripe
 stripe.api_key = "sk_test_FyFkCuZ9s6C55DVxWA7niTil00Vztm2fgy"
 
 
-class Payment_Processor(object):
+class PaymentProcessor(object):
     def setup(self):
         """FIXME"""
         print("payment_processor is setting up")
