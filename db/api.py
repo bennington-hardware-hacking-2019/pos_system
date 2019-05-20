@@ -1,120 +1,184 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import uuid
 import psycopg2
-import psycopg2.extras
-from psycopg2 import sql
+import psycopg2.extras # we need a dictionary for each row
 
 DATABASE = 'tapa'
 
 class DB(object):
-    def __init__(self):
-        self.conn = psycopg2.connect("dbname='{0}'".format(DATABASE))
+	def __init__(self):
+		# uses our DATABASE variable to set the dbname and create a connection
+		self.conn = psycopg2.connect("dbname='{0}'".format(DATABASE))
 
-    def setup(self):
-        """FIXME"""
-        print("db is setting up")
+	def setup(self):
+		"""
+		FIXME
+		"""
+		print("db is setting up")
 
-    def validate_card(self, nfc_card):
-        """check if the card exists in the store"""
-        print("db is validating:", nfc_card)
-        if self.get_card(nfc_card) is None:
-            print("db failed to validate:", nfc_card)
-            return False
+	def check_card(self, card):
+		"""
+		check if the card exists in the db
+		"""
+		print("db is validating: ", card)
+		if self.get_buyer(card) is None:
+			print("db failed to validate: ", card)
+			return False
+		else:
+			print("db successfully validated: ", card)
+			return True
 
-        print("db successfully validated:", nfc_card)
-        return True
+	def get_buyer(self, card):
+		"""
+		get buyer information from card
+		returns a dictionary buyer object
+		"""
+		# use psycopg extras to return a fancy dictionary for each row
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		# get the buyer
+		cur.execute(
+			"""
+			SELECT *
+			FROM buyer
+			WHERE card = %s;
+			""",
+			(card,)
+		)
+		buyer = cur.fetchone()
+		cur.close()
+		return buyer
 
-    def get_card(self, nfc_card):
-        """get a card information"""
-        cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute("SELECT * FROM account WHERE nfc_card = %s;", (nfc_card,))
-        result = cur.fetchone()
-        cur.close()
+	def get_stock(self):
+		"""
+		get all in stock items
+		returns an array of item dictionaries
+		"""
+		print("db is getting all in stock items")
+		# use psycopg extras to return a fancy dictionary for each row
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		# get the buyer
+		cur.execute(
+			"""
+			SELECT *
+			FROM item
+			JOIN stock
+			ON item.index = stock.item_index;
+			"""
+		)
+		items = cur.fetchall()
+		cur.close()
+		return items
 
-        return result
+	def get_items(self, tags):
+		"""
+		get items information
+		returns an array of item dictionaries
+		"""
+		items = []
+		for tag in tags:
+			items.append(self.get_item(tag))
+		return items
 
-    def get_available_items(self, cart):
-        """return a map of item information from the cart
-           format:
-             <nfc_tag>: {"item":<item>, "description":<description", "price":<price"}}
-        """
-        print("db is getting items information in the store:", cart)
-        d = {}
-        for i in cart:
-            item = self.get_available_item(i)
-            try:
-                d[item.get("nfc_tag")] = {
-                        "item": item.get("item"),
-                        "description": item.get("description"),
-                        "price": float(item.get("price"))
-                }
-            except AttributeError as e:
-                # if the tag is None, there is nothing we really do here
-                pass
+	def get_item(self, tag):
+		"""
+		get item information
+		returns an item dictionary
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			SELECT *
+			FROM item
+			JOIN stock
+			ON item.index = stock.item_index
+			WHERE item.tag = %s
+			""",
+			(tag,)
+		)
+		item = cur.fetchone()
+		cur.close()
+		return item
 
-        return d
+	def sell_items(self, tags, sale_index):
+		"""
+		add sale_index to items
+		returns a boolean
+		"""
+		for tag in tags:
+			self.sell_item(tag, sale)
+		return True
 
-    def get_available_item(self, nfc_tag):
-        """get item informations for a available item"""
-        cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute("SELECT * FROM inventory WHERE nfc_tag = %s AND status = %s;", (nfc_tag, "available",))
-        result = cur.fetchone()
-        cur.close()
+	def sell_item(self, tag, sale_index):
+		"""
+		add sale_index to item
+		returns a boolean
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			UPDATE item
+			SET sale_index = %s
+			WHERE tag = %s
+			""",
+			(sale_index, tag,)
+		)
+		self.conn.commit()
+		cur.close()
+		return True
 
-        return result
-    
-    def update_sold_items(self, items):
-        """update items status to sold"""
-        for item in items:
-            self.update_item_status(item, "sold")
+	def make_sale(self, card, tags):
+		"""
+		create a sale of items
+		returns a sale dictionary
+		"""
+		bennington_id = int(self.get_buyer(card).get("bennington_id"))
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			INSERT INTO sale (
+				bennington_id
+			) VALUES (%s);
+			""",
+			(bennington_id)
+		)
+		sale = cur.fetchone()
+		self.sell_items(tags, sale.get("index"))
+		self.conn.commit()
+		cur.close()
+		return sale
 
-    def update_item_status(self, nfc_tag, status):
-        """update item status to either available or sold"""
-        valid_status = ["available", "sold"]
-        if status not in valid_status:
-            print("failed to update status:", status)
-            return
+	def get_sale(self, index):
+		"""
+		get sale information for a given index
+		returns a sale dictionary
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			SELECT *
+			FROM sale
+			WHERE index = %s;
+			""",
+			(index,)
+		)
+		sale = cur.fetchone()
+		cur.close()
+		return sale
 
-        cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute("UPDATE inventory SET status = %s WHERE nfc_tag = %s;", (status, nfc_tag,))
-        self.conn.commit()
-        cur.close()
-
-    def get_item_status(self, nfc_tag):
-        """get item status"""
-        cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute("SELECT status FROM inventory WHERE nfc_tag = %s;", (nfc_tag,))
-        result = cur.fetchone()
-        cur.close()
-
-        return result["status"]
-
-    def create_pending_transaction(self, card, items):
-        """create a pending transaction for purchasing items"""
-        # FIXME - this generates a random uuid, but not sure if this is how we
-        # should use it though
-        transaction_id = str(uuid.uuid4())
-        bennington_id = int(self.get_card(card).get("bennington_id"))
-        date_added = datetime.datetime.now()
-
-        cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-
-        for nfc_tag in items:
-            cur.execute("INSERT INTO transaction (transaction_id, bennington_id, nfc_tag, date_added, status) VALUES (%s, %s, %s, %s, %s);",
-                    (transaction_id, bennington_id, nfc_tag, date_added, "pending"))
-
-        self.conn.commit()
-        cur.close()
-
-        return transaction_id
-
-    def get_transaction(self, id):
-        """get transaction information for a given transaction id"""
-        cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute("SELECT * FROM transaction WHERE transaction_id = %s;", (id,))
-        result = cur.fetchall()
-        cur.close()
-
-        return result
+	def get_unpaid(self):
+		"""
+		get unpaid sales
+		returns an array of sale dictionaries
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			SELECT *
+			FROM sale
+			WHERE date_paid = NULL;
+			"""
+		)
+		sales = cur.fetchall()
+		cur.close()
+		return sales

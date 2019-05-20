@@ -35,7 +35,7 @@ class Controller(object):
         bennington_card = self.wiegand.read()
 
         # if the card is invalid (not in the db), end the session
-        if not self.db.validate_card(bennington_card):
+        if not self.db.check_card(bennington_card):
             return False
 
         # scan a number of nfc tags and add them to a cart
@@ -50,7 +50,7 @@ class Controller(object):
             return False
 
         # get informations for available items in the cart
-        items = self.db.get_available_items(cart)
+        items = self.db.get_items(cart)
 
         if len(items) == 0:
             return False
@@ -62,17 +62,15 @@ class Controller(object):
         # create a pending transaction
         # TODO - need to verify transaction once it's paid then update the
         # database again
-        transaction_id = self.db.create_pending_transaction(bennington_card, items)
+        transaction_id = self.db.make_sale(bennington_card, items)
 
         # print out the transaction information
-        print("transaction:", self.db.get_transaction(transaction_id))
-
-        # update items status to sold
-        self.db.update_sold_items(items)
+        print("transaction: ", self.db.get_sale(transaction_id))
 
         # check the availability of the item in the cart again
         # since all of them are sold, there should be no item left to be purchased
-        if len(self.db.get_available_items(cart)) != 0:
-            return False
+		# deprecated!
+#        if len(self.db.get_stock(cart)) != 0:
+#            return False
 
         return True
