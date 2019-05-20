@@ -15,7 +15,7 @@ class Controller(object):
         self.wiegand = wiegand.Wiegand()
         self.pn532 = pn532.PN532()
         self.db = db.DB()
-        self.payment_processor = payment_processor.Payment_Processor()
+        self.payment_processor = payment_processor.PaymentProcessor()
 
     def setup(self):
         print("controller is setting up")
