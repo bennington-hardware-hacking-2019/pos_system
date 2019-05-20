@@ -4,4 +4,4 @@ ALTER TABLE "admin" ADD CONSTRAINT buyers_are_admins FOREIGN KEY (bennington_id)
 
 ALTER TABLE "stock" ADD CONSTRAINT items_in_stock FOREIGN KEY (item_index) REFERENCES item (index) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "item" ADD CONSTRAINT purchases_have_items FOREIGN KEY (purchase_index) REFERENCES purchase (index) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "item" ADD CONSTRAINT sales_have_items FOREIGN KEY (sale_index) REFERENCES sale (index) ON DELETE SET NULL ON UPDATE CASCADE;
