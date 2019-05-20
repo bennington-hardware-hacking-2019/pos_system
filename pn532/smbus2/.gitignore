@@ -1,0 +1,10 @@
+.tox/
+doc/_build
+build/
+dist/
+.vscode/
+.idea/
+
+*.pyc
+*.egg-info
+__pycache__
