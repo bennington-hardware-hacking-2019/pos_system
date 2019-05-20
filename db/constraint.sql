@@ -1,4 +1,4 @@
-/* database constraint - these link our fks */
+/* database constraint - these link our foreign keys */
 
 ALTER TABLE "admin" ADD CONSTRAINT buyers_are_admins FOREIGN KEY (bennington_id) REFERENCES buyer (bennington_id) ON DELETE CASCADE ON UPDATE CASCADE;
 
