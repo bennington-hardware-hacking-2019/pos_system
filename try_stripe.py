@@ -7,4 +7,5 @@ if __name__== "__main__":
     pay = Payment_Processor()
     pay.setup()
 
-    print(pay.get_balance())
+    # print(pay.is_paid("ch_1EbaDcE9aH1iiXRr8s1DdXBX"))
+    print(pay.get_charges(3))
