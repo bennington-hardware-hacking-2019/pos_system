@@ -44,6 +44,7 @@ Column     |  Type   | Collation | Nullable |               Default             
 index         | integer |           | not null | nextval('admin_index_seq'::regclass) | plain   |              |
 bennington_id | integer |           | not null |                                      | plain   |              |
 super_admin   | boolean |           |          |                                      | plain   |              |
+
 Indexes:
 "admin_pkey" PRIMARY KEY, btree (bennington_id)
 "admin_index_key" UNIQUE CONSTRAINT, btree (index)
@@ -59,6 +60,7 @@ bennington_id | integer                |           | not null |                 
 card          | integer                |           | not null |                                      | plain    |              |
 name          | character varying(255) |           | not null |                                      | extended |              |
 email         | character varying(255) |           | not null |                                      | extended |              |
+
 Indexes:
 "buyer_pkey" PRIMARY KEY, btree (bennington_id)
 "buyer_card_key" UNIQUE CONSTRAINT, btree (card)
@@ -78,6 +80,7 @@ description | character varying(255)      |           |          |              
 cost        | money                       |           | not null |                                     | plain    |              |
 date_added  | timestamp without time zone |           | not null | CURRENT_TIMESTAMP                   | plain    |              |
 sale_index  | integer                     |           |          |                                     | plain    |              |
+
 Indexes:
  "item_pkey" PRIMARY KEY, btree (tag)
  "item_index_key" UNIQUE CONSTRAINT, btree (index)
@@ -94,6 +97,7 @@ index         | integer                     |           | not null | nextval('sa
 bennington_id | integer                     |           | not null |                                     | plain   |              |
 date_added    | timestamp without time zone |           | not null | CURRENT_TIMESTAMP                   | plain   |              |
 date_paid     | timestamp without time zone |           |          |                                     | plain   |              |
+
 Indexes:
 "sale_pkey" PRIMARY KEY, btree (index)
 "sale_bennington_id_key" UNIQUE CONSTRAINT, btree (bennington_id)
@@ -106,6 +110,7 @@ Column   |  Type   | Collation | Nullable |               Default               
 ------------|---------|-----------|----------|--------------------------------------|---------|--------------|-------------
 index      | integer |           | not null | nextval('stock_index_seq'::regclass) | plain   |              |
 item_index | integer |           | not null |                                      | plain   |              | 
+
 Indexes:
  "stock_pkey" PRIMARY KEY, btree (index)
  "stock_item_index_key" UNIQUE CONSTRAINT, btree (item_index)
