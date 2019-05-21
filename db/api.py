@@ -132,7 +132,8 @@ class DB(object):
 		create a sale of items
 		returns a sale dictionary
 		"""
-		bennington_id = int(self.get_buyer(card).get("bennington_id"))
+		# bennington_id = int(self.get_buyer(card).get("bennington_id"))
+		bennington_id = self.get_buyer(card).get("bennington_id")
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cur.execute(
 			"""
