@@ -6,8 +6,4 @@ from controller import Controller
 if __name__== "__main__":
     controller = Controller()
     controller.setup()
-
-    if controller.run():
-        print("success")
-    else:
-        print("error")
+	controller.run()
