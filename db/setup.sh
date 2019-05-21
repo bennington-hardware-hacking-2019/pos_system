@@ -7,7 +7,7 @@ echo "start setting up a database"
 
 echo "create a database named tapa"
 # test what the operating system is
-if [[ "$uname" == "Darwin" ]]; then
+if [[ "$OSTYPE" == "darwin"* ]]; then
     sudo -u $(whoami) dropdb -e tapa
     sleep 1
     sudo -u $(whoami) createdb -O $(whoami) -e tapa
