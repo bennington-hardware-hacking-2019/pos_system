@@ -46,10 +46,11 @@ bennington_id | integer |           | not null |                                
 super_admin   | boolean |           |          |                                      | plain   |              |
 
 Indexes:
-"admin_pkey" PRIMARY KEY, btree (bennington_id)
-"admin_index_key" UNIQUE CONSTRAINT, btree (index)
+- "admin_pkey" PRIMARY KEY, btree (bennington_id)
+- "admin_index_key" UNIQUE CONSTRAINT, btree (index)
+
 Foreign-key constraints:
-"buyers_are_admins" FOREIGN KEY (bennington_id) REFERENCES buyer(bennington_id) ON UPDATE CASCADE ON DELETE CASCADE
+- "buyers_are_admins" FOREIGN KEY (bennington_id) REFERENCES buyer(bennington_id) ON UPDATE CASCADE ON DELETE CASCADE
 
 ### buyer
 
@@ -62,12 +63,13 @@ name          | character varying(255) |           | not null |                 
 email         | character varying(255) |           | not null |                                      | extended |              |
 
 Indexes:
-"buyer_pkey" PRIMARY KEY, btree (bennington_id)
-"buyer_card_key" UNIQUE CONSTRAINT, btree (card)
-"buyer_email_key" UNIQUE CONSTRAINT, btree (email)
-"buyer_index_key" UNIQUE CONSTRAINT, btree (index)
+- "buyer_pkey" PRIMARY KEY, btree (bennington_id)
+- "buyer_card_key" UNIQUE CONSTRAINT, btree (card)
+- "buyer_email_key" UNIQUE CONSTRAINT, btree (email)
+- "buyer_index_key" UNIQUE CONSTRAINT, btree (index)
+
 Referenced by:
-TABLE "admin" CONSTRAINT "buyers_are_admins" FOREIGN KEY (bennington_id) REFERENCES buyer(bennington_id) ON UPDATE CASCADE ON DELETE CASCADE
+- TABLE "admin" CONSTRAINT "buyers_are_admins" FOREIGN KEY (bennington_id) REFERENCES buyer(bennington_id) ON UPDATE CASCADE ON DELETE CASCADE
 
 ### item
 
@@ -82,12 +84,14 @@ date_added  | timestamp without time zone |           | not null | CURRENT_TIMES
 sale_index  | integer                     |           |          |                                     | plain    |              |
 
 Indexes:
- "item_pkey" PRIMARY KEY, btree (tag)
- "item_index_key" UNIQUE CONSTRAINT, btree (index)
+- "item_pkey" PRIMARY KEY, btree (tag)
+- "item_index_key" UNIQUE CONSTRAINT, btree (index)
+
 Foreign-key constraints:
- "sales_have_items" FOREIGN KEY (sale_index) REFERENCES sale(index) ON UPDATE CASCADE ON DELETE SET NULL
+- "sales_have_items" FOREIGN KEY (sale_index) REFERENCES sale(index) ON UPDATE CASCADE ON DELETE SET NULL
+
 Referenced by:
- TABLE "stock" CONSTRAINT "items_in_stock" FOREIGN KEY (item_index) REFERENCES item(index) ON UPDATE CASCADE ON DELETE CASCADE
+- TABLE "stock" CONSTRAINT "items_in_stock" FOREIGN KEY (item_index) REFERENCES item(index) ON UPDATE CASCADE ON DELETE CASCADE
 
 ### sale
 
@@ -99,20 +103,22 @@ date_added    | timestamp without time zone |           | not null | CURRENT_TIM
 date_paid     | timestamp without time zone |           |          |                                     | plain   |              |
 
 Indexes:
-"sale_pkey" PRIMARY KEY, btree (index)
-"sale_bennington_id_key" UNIQUE CONSTRAINT, btree (bennington_id)
+- "sale_pkey" PRIMARY KEY, btree (index)
+- "sale_bennington_id_key" UNIQUE CONSTRAINT, btree (bennington_id)
+
 Referenced by:
-TABLE "item" CONSTRAINT "sales_have_items" FOREIGN KEY (sale_index) REFERENCES sale(index) ON UPDATE CASCADE ON DELETE SET NULL
+- TABLE "item" CONSTRAINT "sales_have_items" FOREIGN KEY (sale_index) REFERENCES sale(index) ON UPDATE CASCADE ON DELETE SET NULL
 
 ### stock
 
 Column   |  Type   | Collation | Nullable |               Default                | Storage | Stats target | Description
 ------------|---------|-----------|----------|--------------------------------------|---------|--------------|-------------
 index      | integer |           | not null | nextval('stock_index_seq'::regclass) | plain   |              |
-item_index | integer |           | not null |                                      | plain   |              | 
+item_index | integer |           | not null |                                      | plain   |              |
 
 Indexes:
- "stock_pkey" PRIMARY KEY, btree (index)
- "stock_item_index_key" UNIQUE CONSTRAINT, btree (item_index)
+- "stock_pkey" PRIMARY KEY, btree (index)
+- "stock_item_index_key" UNIQUE CONSTRAINT, btree (item_index)
+
 Foreign-key constraints:
- "items_in_stock" FOREIGN KEY (item_index) REFERENCES item(index) ON UPDATE CASCADE ON DELETE CASCADE
+- "items_in_stock" FOREIGN KEY (item_index) REFERENCES item(index) ON UPDATE CASCADE ON DELETE CASCADE
