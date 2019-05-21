@@ -52,7 +52,7 @@ Indexes:
 Foreign-key constraints:
 - "buyers_are_admins" FOREIGN KEY (bennington_id) REFERENCES buyer(bennington_id) ON UPDATE CASCADE ON DELETE CASCADE
 
-[Back to schema overview](#schema)
+[Schema overview](#schema)
 
 ### buyer
 
@@ -73,7 +73,7 @@ Indexes:
 Referenced by:
 - TABLE "admin" CONSTRAINT "buyers_are_admins" FOREIGN KEY (bennington_id) REFERENCES buyer(bennington_id) ON UPDATE CASCADE ON DELETE CASCADE
 
-[Back to schema overview](#schema)
+[Schema overview](#schema)
 
 ### item
 
@@ -97,7 +97,7 @@ Foreign-key constraints:
 Referenced by:
 - TABLE "stock" CONSTRAINT "items_in_stock" FOREIGN KEY (item_index) REFERENCES item(index) ON UPDATE CASCADE ON DELETE CASCADE
 
-[Back to schema overview](#schema)
+[Schema overview](#schema)
 
 ### sale
 
@@ -115,7 +115,7 @@ Indexes:
 Referenced by:
 - TABLE "item" CONSTRAINT "sales_have_items" FOREIGN KEY (sale_index) REFERENCES sale(index) ON UPDATE CASCADE ON DELETE SET NULL
 
-[Back to schema overview](#schema)
+[Schema overview](#schema)
 
 ### stock
 
@@ -130,3 +130,5 @@ Indexes:
 
 Foreign-key constraints:
 - "items_in_stock" FOREIGN KEY (item_index) REFERENCES item(index) ON UPDATE CASCADE ON DELETE CASCADE
+
+[Schema overview](#schema)
