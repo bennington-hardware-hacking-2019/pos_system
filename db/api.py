@@ -100,6 +100,7 @@ class DB(object):
 		item = cur.fetchone()
 		cur.close()
 		return item
+
 	def add_item(self,tag,name,desc,cost):
 		"""
 		adds an item to the DB (for admin)
@@ -107,14 +108,16 @@ class DB(object):
 		"""
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cur.execute(
-		"""
-		INSERT INTO item
-		(tag,item,description,cost)
-		VALUES(%s,%s,%s,%s)
-		""",
-		(tag,name,desc,cost)
+			"""
+			INSERT INTO item
+			(tag,item,description,cost)
+			VALUES
+			(%s,%s,%s,%s)
+			""",
+			(tag,name,desc,cost)
 		)
 		return True
+
 	def sell_items(self, tags, sale_index):
 		"""
 		add sale_index to items
