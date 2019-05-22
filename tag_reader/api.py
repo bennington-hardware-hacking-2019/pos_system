@@ -7,7 +7,7 @@ import time
 import logging
 
 # rest time in second betweet each read/write transaction
-REST_INTERVAL = 0.5 
+REST_INTERVAL = 0.3
 
 # maximum block size for each read transaction
 BLOCK_SIZE = 20
