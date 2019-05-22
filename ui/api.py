@@ -11,17 +11,21 @@ class UI(object):
 		# do something
 
 	def add_item(self, item):
+		print("==================")
 		print("Item added to cart")
-		print("\nItem name: ",item.get("name"),"\nItem description: ",item.get("description"),"\nItem cost: ",item.get("cost"))
+		print("==================")
+		print("\nItem:",item.get("item"),"\nDescription:",item.get("description"),"\nCost:",item.get("cost"))
 
 	def checkout(self, sale, items):
+		print("=============")
 		print("Selling items")
-		print("\nSale #: ",sale.get("index"))
-		print("\nSold ",len(items)," items")
+		print("=============")
+		print("\nSale #:",sale.get("index"))
+		print("\nSold ",len(items),"items")
 		cost = 0;
 		for item in items:
 			cost += item.get("cost")
-		print("\nTotal cost: ", cost)
+		print("\nTotal cost:", cost)
 
 	def card_error(self):
 		print("We can't find your card, try again?")

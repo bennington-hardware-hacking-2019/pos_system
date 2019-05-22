@@ -20,7 +20,7 @@ class Controller(object):
         self.payment_processor = payment_processor.PaymentProcessor()
 
     def setup(self):
-        print("pos_controller is setting up")
+        print("controller is setting up")
         
         # FIXME - disable hardware dep for now
         self.tag_reader.simulate_setup()
@@ -36,6 +36,11 @@ class Controller(object):
         return False whenever an error is occured to end the session
         """
         print("controller is running")
+
+        # FIXME - instead of running the system sequentially, figure out how
+        # to communicate by sending/catching signals from/to other components
+        # for now, let the sensor run in a defined protocol, nfc read from a
+        # number of defined number of cards
 
         # FIXME - instead of using an array, can use a dictionary to make sure
         # the uniqueness of a tag
@@ -54,7 +59,7 @@ class Controller(object):
             # send the tag's item to the ui
             self.ui.add_item(item)
 
-        print(tags)
+        print("cart:", tags)
 
         # check for a card reading
         card = self.card_reader.simulate_read()
