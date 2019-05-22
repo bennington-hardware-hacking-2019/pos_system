@@ -1,6 +1,11 @@
 init:
 	sudo pip3 install -r requirements.txt
 
+demo:
+	./db/setup.sh
+	sleep 1
+	python3 main.py
+
 run:
 	python3 main.py
 
