@@ -135,8 +135,17 @@ class DB(object):
 			UPDATE item
 			SET sale_index = %s
 			WHERE tag = %s
+			RETURNING index
 			""",
 			(sale_index, tag,)
+		)
+		item_index = cur.fetchone()
+		cur.execute(
+			"""
+			DELETE FROM stock
+			WHERE item_index = %s
+			""",
+			(item_index,)
 		)
 		self.conn.commit()
 		cur.close()
