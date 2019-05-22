@@ -11,17 +11,17 @@ class UI(object):
 		pass 
 
 	def add_item(self, item):
-		print("==================")
+		print("\n==================")
 		print("Item added to cart")
 		print("==================")
-		print("\nItem:",item.get("item"),"\nDescription:",item.get("description"),"\nCost:",item.get("cost"))
+		print("\nItem:", item.get("item"), "\nDescription:", item.get("description"), "\nCost:", item.get("cost"))
 
 	def checkout(self, sale, items):
-		print("=============")
+		print("\n=============")
 		print("Selling items")
 		print("=============")
-		print("\nSale #:",sale.get("index"))
-		print("\nSold ",len(items),"items")
+		print("\nSale #:", sale.get("index"))
+		print("\nSold", len(items), "items")
 		cost = 0;
 		for item in items:
 			# cost has the postgres money type, in such format
