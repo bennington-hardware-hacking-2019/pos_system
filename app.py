@@ -38,7 +38,7 @@ def admin():
 		return redirect(url_for('login')) #needs testing
 
 @app.route('/admin/create', methods = ['POST'])
-def admin():
+def create():
 	if 'admin' in session:
 		item_name = request.form['item_name']
 		item_desc = request.form['item_desc']
