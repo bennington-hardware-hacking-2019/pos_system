@@ -7,7 +7,7 @@ import time
 import logging
 
 # rest time in second betweet each read/write transaction
-REST_INTERVAL = 0.5 
+REST_INTERVAL = 0.3
 
 # maximum block size for each read transaction
 BLOCK_SIZE = 20
@@ -19,8 +19,7 @@ class PN532(object):
         self.address = register.PN532_DEFAULT_ADDRESS
 
         # smbus object
-        # FIXME - disable hardware dep for now
-        # self.bus = SMBus(1)
+        self.bus = SMBus(1)
 
         # logger object
         self.logger = logging.getLogger()

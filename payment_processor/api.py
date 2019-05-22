@@ -12,10 +12,14 @@ class PaymentProcessor(object):
         # print("payment_processor is setting up")
         pass
 
-    def send_invoice(self, card, items):
+    def send_invoice(self, name, email, items):
         """send invoice"""
-        print("payment_processor is sending invoice of", items, "to", card)
-        return True
+        total_cost = 0
+        for item in items:
+            total_cost += float(item.get("cost")[1:])
+
+        desc = "Charge " + name + " (" + email + ")" + " for a total of " + str(total_cost)
+        return self.create_charge(int(total_cost * 100), desc)
 
     def get_balance(self):
         """get stripe account balance"""
@@ -27,6 +31,7 @@ class PaymentProcessor(object):
 
     def create_charge(self, amount, desc):
         """create a charge and return its id"""
+        print(desc)
         charge = stripe.Charge.create(
                 amount=amount,
                 currency="usd",
@@ -43,3 +48,7 @@ class PaymentProcessor(object):
     def is_paid(self, id):
         """return charnge status whether is is paid or not"""
         return stripe.Charge.retrieve(id).get("paid")
+
+    def get_charge(self, id):
+        """return a charnge"""
+        return stripe.Charge.retrieve(id)

@@ -22,9 +22,8 @@ class Controller(object):
     def setup(self):
         # print("controller is setting up")
         
-        # FIXME - disable hardware dep for now
-        self.tag_reader.simulate_setup()
-        self.card_reader.simulate_setup()
+        self.tag_reader.setup()
+        self.card_reader.setup()
 
         self.db.setup()
         self.ui.setup()
@@ -47,20 +46,23 @@ class Controller(object):
         tags = []
 
         # check for a tag reading
-        tag = self.tag_reader.simulate_read()
-        
-        # check if the item exists
-        item = self.db.get_item(tag)
+        for i in range(3):
+            tag = self.tag_reader.read()
+            
+            # check if the item exists
+            item = self.db.get_item(tag)
 
-        if item is not None:
-            # add the item to the cart
-            tags.append(tag)
+            if item is not None:
+                # add the item to the cart
+                tags.append(tag)
 
-            # send the tag's item to the ui
-            self.ui.add_item(item)
+                # send the tag's item to the ui
+                self.ui.add_item(item)
+            else:
+                print("invalid tag item")
 
         # check for a card reading
-        card = self.card_reader.simulate_read()
+        card = self.card_reader.read()
 
         if self.db.check_card(card):
             # collect all the items
@@ -71,9 +73,20 @@ class Controller(object):
 
             # update the ui
             self.ui.checkout(sale, items)
+
+            # send invoice to the customer
+            card_info = self.db.get_buyer(card)
+            name = card_info.get("name")
+            email = card_info.get("email")
+            charge_id = self.payment_processor.send_invoice(name, email, items)
+
+            # print(self.payment_processor.get_charge(charge_id))
+
+            # FIXME - check if it's paid
+            # realistically would check it later
+            if self.payment_processor.is_paid(charge_id):
+                print(name, "has paid")
+
+            # FIXME - add logic to update the stock after an item is purchased
         else:
             self.ui.card_error();
-
-        # FIXME - add logic to update the stock after an item is purchased
-
-        # FIXME - add logic to send invoice to customer
