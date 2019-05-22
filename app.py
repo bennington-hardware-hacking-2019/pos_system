@@ -6,7 +6,7 @@
 from flask import Flask, session, render_template, request, redirect, url_for
 import psycopg2 as psyco
 app = Flask(__name__)
-app.secret_key = 'yagabeatsTHO’
+app.secret_key = 'yagabeatsTHO'
 @app.route('/')
 def index():
 	return render_template('index.html')
