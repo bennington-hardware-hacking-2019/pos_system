@@ -73,3 +73,7 @@ class Controller(object):
             self.ui.checkout(sale, items)
         else:
             self.ui.card_error();
+
+        # FIXME - add logic to update the stock after an item is purchased
+
+        # FIXME - add logic to send invoice to customer
