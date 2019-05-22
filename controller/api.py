@@ -74,17 +74,17 @@ class Controller(object):
             # update the ui
             self.ui.checkout(sale, items)
 
-            # FIXME - add logic to update the stock after an item is purchased
-
             # send invoice to the customer
             card_info = self.db.get_buyer(card)
             name = card_info.get("name")
-            email = card_info.get("name")
+            email = card_info.get("email")
             charge_id = self.payment_processor.send_invoice(name, email, items)
 
             # FIXME - check if it's paid
             # realistically would check it later
             if self.payment_processor.is_paid(charge_id):
                 print(name, "has paid")
+
+            # FIXME - add logic to update the stock after an item is purchased
         else:
             self.ui.card_error();
