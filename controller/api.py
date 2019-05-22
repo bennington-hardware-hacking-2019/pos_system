@@ -80,6 +80,8 @@ class Controller(object):
             email = card_info.get("email")
             charge_id = self.payment_processor.send_invoice(name, email, items)
 
+            # print(self.payment_processor.get_charge(charge_id))
+
             # FIXME - check if it's paid
             # realistically would check it later
             if self.payment_processor.is_paid(charge_id):

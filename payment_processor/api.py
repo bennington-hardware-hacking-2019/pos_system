@@ -18,8 +18,8 @@ class PaymentProcessor(object):
         for item in items:
             total_cost += float(item.get("cost")[1:])
 
-        desc = "Charge" + name + "(" + email + ")" + "for a total of" + str(total_cost)
-        return self.create_charge(total_cost, desc)
+        desc = "Charge " + name + " (" + email + ")" + " for a total of " + str(total_cost)
+        return self.create_charge(int(total_cost * 100), desc)
 
     def get_balance(self):
         """get stripe account balance"""
@@ -48,3 +48,7 @@ class PaymentProcessor(object):
     def is_paid(self, id):
         """return charnge status whether is is paid or not"""
         return stripe.Charge.retrieve(id).get("paid")
+
+    def get_charge(self, id):
+        """return a charnge"""
+        return stripe.Charge.retrieve(id)
