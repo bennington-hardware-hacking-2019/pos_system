@@ -57,7 +57,8 @@ class Wiegand(object):
 
     def simulate_setup(self):
         """FIXME - simulate setup, only used for testing purposes"""
-        print("wiegand is setting up")
+        # print("wiegand is setting up")
+        pass
 
     def simulate_read(self):
         """FIXME - simulate reading, only used for testing purposes"""

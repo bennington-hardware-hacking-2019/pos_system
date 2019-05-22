@@ -9,7 +9,8 @@ stripe.api_key = "sk_test_FyFkCuZ9s6C55DVxWA7niTil00Vztm2fgy"
 class PaymentProcessor(object):
     def setup(self):
         """FIXME"""
-        print("payment_processor is setting up")
+        # print("payment_processor is setting up")
+        pass
 
     def send_invoice(self, card, items):
         """send invoice"""

@@ -27,7 +27,7 @@ class PN532(object):
 
     def setup(self, enable_logging=False):
         """setup the device"""
-        print("pn532 is setting up")
+        # print("pn532 is setting up")
         if enable_logging:
             self.use_logging()
 

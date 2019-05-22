@@ -20,7 +20,7 @@ class Controller(object):
         self.payment_processor = payment_processor.PaymentProcessor()
 
     def setup(self):
-        print("controller is setting up")
+        # print("controller is setting up")
         
         # FIXME - disable hardware dep for now
         self.tag_reader.simulate_setup()
@@ -35,7 +35,7 @@ class Controller(object):
         run the pos_system (for demo purposes)
         return False whenever an error is occured to end the session
         """
-        print("controller is running")
+        # print("controller is running")
 
         # FIXME - instead of running the system sequentially, figure out how
         # to communicate by sending/catching signals from/to other components
@@ -59,20 +59,17 @@ class Controller(object):
             # send the tag's item to the ui
             self.ui.add_item(item)
 
-        print("cart:", tags)
-
         # check for a card reading
         card = self.card_reader.simulate_read()
 
         if self.db.check_card(card):
             # collect all the items
             items = self.db.get_items(tags)
-            print(items)
 
             # make the sale
-            # sale = self.db.make_sale(card, tags)
+            sale = self.db.make_sale(card, tags)
 
             # update the ui
-            # self.ui.checkout(sale, items)
+            self.ui.checkout(sale, items)
         else:
             self.ui.card_error();

@@ -15,18 +15,19 @@ class DB(object):
 		"""
 		FIXME
 		"""
-		print("db is setting up")
+		# print("db is setting up")
+		pass
 
 	def check_card(self, card):
 		"""
 		check if the card exists in the db
 		"""
-		print("db is validating: ", card)
+		# print("db is validating: ", card)
 		if self.get_buyer(card) is None:
-			print("db failed to validate: ", card)
+			# print("db failed to validate: ", card)
 			return False
 		else:
-			print("db successfully validated: ", card)
+			# print("db successfully validated: ", card)
 			return True
 
 	def get_buyer(self, card):
@@ -54,7 +55,7 @@ class DB(object):
 		get all in stock items
 		returns an array of item dictionaries
 		"""
-		print("db is getting all in stock items")
+		# print("db is getting all in stock items")
 		# use psycopg extras to return a fancy dictionary for each row
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		# get the buyer
@@ -106,7 +107,7 @@ class DB(object):
 		returns a boolean
 		"""
 		for tag in tags:
-			self.sell_item(tag, sale)
+			self.sell_item(tag, sale_index)
 		return True
 
 	def sell_item(self, tag, sale_index):
@@ -132,16 +133,16 @@ class DB(object):
 		create a sale of items
 		returns a sale dictionary
 		"""
-		# bennington_id = int(self.get_buyer(card).get("bennington_id"))
-		bennington_id = self.get_buyer(card).get("bennington_id")
+		bennington_id = int(self.get_buyer(card).get("bennington_id"))
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cur.execute(
 			"""
 			INSERT INTO sale (
 				bennington_id
-			) VALUES (%s);
+			) VALUES (%s)
+                        RETURNING index;
 			""",
-			(bennington_id)
+			(bennington_id,)
 		)
 		sale = cur.fetchone()
 		self.sell_items(tags, sale.get("index"))
