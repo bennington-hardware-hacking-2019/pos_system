@@ -19,8 +19,7 @@ class PN532(object):
 		self.address = register.PN532_DEFAULT_ADDRESS
 
 		# smbus object
-		# FIXME sim
-		# self.bus = SMBus(1)
+		self.bus = SMBus(1)
 
 		# logger object
 		self.logger = logging.getLogger()
