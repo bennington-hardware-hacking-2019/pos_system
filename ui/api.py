@@ -4,11 +4,11 @@ class UI(object):
 
 	def __init__(self):
 		# print("ui is initializing")
-		pass 
+		pass
 
 	def setup(self):
 		# print("ui is setting up")
-		pass 
+		pass
 
 	def add_item(self, item):
 		print("\n==================")
@@ -25,10 +25,10 @@ class UI(object):
 		cost = 0;
 		for item in items:
 			# cost has the postgres money type, in such format
-                        # $xx.xx. python will read this as string. that said,
-                        # need to get rid of the $ and convert it back from
-                        # string to float in order to add up the total cost
-                        cost += float(item.get("cost")[1:])
+			# $xx.xx. python will read this as string. that said,
+			# need to get rid of the $ and convert it back from
+			# string to float in order to add up the total cost
+			cost += float(item.get("cost")[1:])
 		print("\nTotal cost:", cost)
 
 	def card_error(self):
