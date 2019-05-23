@@ -15,6 +15,8 @@ class Server(object):
 		self.app.secret_key = 'yagabeatsTHO'
 		self.socketio = SocketIO(self.app)
 
+		self.is_read = False
+
 		self.tag_reader = tag_reader.PN532()
 		self.card_reader = card_reader.Wiegand()
 		self.db = db.DB()
@@ -47,7 +49,17 @@ class Server(object):
 			# check if the item exists in the database
 
 			# send a response back to the client on `server response` channel
-			emit('server response', {'msg': 'hello from server'})
+			# check for a tag reading
+			tag = self.tag_reader.read()
+
+			item = self.db.get_item(tag)
+			resp = {
+                                'item': item.get('item'),
+                                'description': item.get('description'),
+                                'cost': item.get('cost')
+                        }
+
+			emit('server response', resp)
 
 		@self.app.route('/help')
 		def help():
@@ -99,7 +111,7 @@ class Server(object):
 			item = db.items()
 			return render_template('data.html', items=items)
 
-	def start(self, sim=False):
+	def start(self):
 		# self.app.run(debug=True)
 		self.socketio.run(self.app, debug=True)
 
