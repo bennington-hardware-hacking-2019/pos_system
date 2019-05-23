@@ -21,19 +21,14 @@
 		</header>
 		<main>
 			{% block main %}
-<!-- 			<section>
+ 			<section>
 				{% block content %}
 				<h1>Tap an item to start checking out</h1>
 				{% endblock %}
-			</section> -->
-			<a href="proceed_to_checkout" title="proceed to checkout">
-				<section>
-					<h1>Proceed to checkout</h1>
-				</section>
-			</a>
+			</section>
 
 			<!-- test ws -->
-			<button onclick="server_request()">echo</button>
+			<button onclick="add_to_cart_request()">add_to_cart_request</button>
 			<script type="text/javascript" charset="utf-8">
 				var socket = io.connect('http://' + document.domain + ':' + location.port);
 				
@@ -43,12 +38,12 @@
 				});
 
 				// send data over `server request` channel
-				function server_request() {
-					socket.emit('server request', {msg: 'hello from client'});
+				function add_to_cart_request() {
+					socket.emit('add_to_cart_request', {msg: 'add_to_cart_request'});
 				}
 
 				// receive data on `server response` channel
-				socket.on('server response', function(payload) {
+				socket.on('add_to_cart_response', function(payload) {
 					console.log(payload);
 				});				
 			</script>

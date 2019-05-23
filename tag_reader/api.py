@@ -19,7 +19,8 @@ class PN532(object):
 		self.address = register.PN532_DEFAULT_ADDRESS
 
 		# smbus object
-		self.bus = SMBus(1)
+		# FIXME - sim
+		# self.bus = SMBus(1)
 
 		# logger object
 		self.logger = logging.getLogger()
@@ -98,8 +99,8 @@ class PN532(object):
 
 	def sim_read(self):
 		"""FIXME - simulate reading, only used for testing purposes"""
-		time.sleep(Rest)
-		return {1,0,68,0,7,4,137,16,98,101,96}
+		time.sleep(1)
+		return [1 ,0 ,68 ,0 ,7 ,4 ,29 ,208 ,106 ,101 ,96]
 
 def construct_frame(data):
 	"""construct frame for communicating between host controller and pn532"""
