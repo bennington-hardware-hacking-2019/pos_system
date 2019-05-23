@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template, request, session
+from flask_socketio import SocketIO, join_room, emit
+
 import tag_reader
 import card_reader
 import db
@@ -8,26 +10,44 @@ import payment_processor
 
 class Server(object):
 	def __init__(self):
+		# initialize flask and socketio
 		self.app = Flask(__name__)
+		self.app.secret_key = 'yagabeatsTHO'
+		self.socketio = SocketIO(self.app)
+
 		self.tag_reader = tag_reader.PN532()
 		self.card_reader = card_reader.Wiegand()
 		self.db = db.DB()
 		self.payment_processor = payment_processor.PaymentProcessor()
 
-	def setup(self, sim=False):
-		self.app.secret_key = 'yagabeatsTHO'
+	def setup(self, sim=False):		
 		if sim:
 			self.tag_reader.sim_setup()
 			self.card_reader.sim_setup()
 		else:
 			self.tag_reader.setup()
 			self.card_reader.setup()
+		
 		self.db.setup()
 		self.payment_processor.setup()
 
 		@self.app.route('/')
 		def index():
 			return render_template("base.html.j2", variable="Oy")
+
+		@self.app.route('/proceed_to_checkout')
+		def proceed_to_checkout():
+			return "checkout here"
+
+		@self.socketio.on('server request')
+		def on_server_request(payload):
+			print(payload)
+
+			# TODO - check for a tag reading
+			# check if the item exists in the database
+
+			# send a response back to the client on `server response` channel
+			emit('server response', {'msg': 'hello from server'})
 
 		@self.app.route('/help')
 		def help():
@@ -71,9 +91,8 @@ class Server(object):
 				return redirect(url_for('login')) #needs testing
 
 		#
-		# # Vue.js API endpoints
+		# Vue.js API endpoints
 		#
-
 		@self.app.route('/items', methods = ['GET'])
 		def items():
 			#postgres
@@ -81,7 +100,8 @@ class Server(object):
 			return render_template('data.html', items=items)
 
 	def start(self, sim=False):
-		self.app.run(debug=True)
+		# self.app.run(debug=True)
+		self.socketio.run(self.app, debug=True)
 
 	def cart(self, sim=False):
 		"""

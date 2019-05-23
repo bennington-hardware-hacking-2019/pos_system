@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-#FIXME sim
-#from RPi.GPIO import *
+# FIXME sim
+# from RPi.GPIO import *
 import time
 
 from . import exceptions
