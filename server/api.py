@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, session
 import tag_reader
 import card_reader
 import db
@@ -27,12 +27,63 @@ class Server(object):
 
 		@self.app.route('/')
 		def index():
-			return render_template("index.html.j2", variable="Oy")
+			return render_template("base.html.j2", variable="Oy")
+
+		@self.app.route('/help')
+		def help():
+			return render_template('help.html')
+
+		@self.app.route('/info')
+		def info():
+			return render_template('info.html')
+
+		@self.app.route('/login', methods = ['GET'])
+		def login():
+			return render_template('login.html')
+
+		@self.app.route('/admin', methods = ['POST'])
+		def admin():
+			#postgres for card - long term
+			#get the pin from the login form - temporary
+			pin = int(request.form['pin'])
+
+			#if password/card verified
+
+			if (pin == 123):
+				session['username'] = 'admin' #Temporary
+				return render_template('inventory.html')
+			else:
+				return redirect(url_for('login')) #needs testing
+
+		@self.app.route('/admin/create', methods = ['GET', 'POST'])
+		def create():
+			if 'username' in session:
+				if request.method == 'POST':
+					name = request.form['name']
+					desc = request.form['desc']
+					cost = request.form['cost']
+					#insert this stuff into whatever
+					db.create(name, desc, cost)
+					return redirect(url_for('items'))
+				elif request.method == 'GET':
+					return render_template('create.html')
+			else:
+				return redirect(url_for('login')) #needs testing
+
+		#
+		# # Vue.js API endpoints
+		#
+
+		@self.app.route('/items', methods = ['GET'])
+		def items():
+			#postgres
+			item = db.items()
+			return render_template('data.html', items=items)
 
 	def start(self, sim=False):
 		self.app.run(debug=True)
 
-	def run(self, sim=False):
+	def cart(self, sim=False):
 		"""
 		run the pos_system
 		"""
