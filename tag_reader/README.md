@@ -51,6 +51,11 @@ To run tests:
 make test
 ```
 
+## Troubleshooting
+
+If `i2cdetect -y 1` doesn't work, try to enable the i2c interface option
+in `sudo raspi-config`.
+
 ## Reference
 - [PN532 data sheet](https://www.nxp.com/docs/en/nxp/data-sheets/PN532_C1.pdf)
 - [PN532 user manual](https://www.nxp.com/docs/en/user-guide/141520.pdf)
