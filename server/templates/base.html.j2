@@ -27,8 +27,10 @@
 				{% endblock %}
 			</section>
 
-			<!-- test ws -->
+			<!-- start test ws -->
 			<button onclick="add_to_cart_request()">add_to_cart_request</button>
+			<button onclick="checkout_request()">checkout_request</button>
+
 			<script type="text/javascript" charset="utf-8">
 				var socket = io.connect('http://' + document.domain + ':' + location.port);
 				
@@ -42,12 +44,22 @@
 					socket.emit('add_to_cart_request', {msg: 'add_to_cart_request'});
 				}
 
-				// receive data on `server response` channel
+				// send data over `server request` channel
+				function checkout_request() {
+					socket.emit('checkout_request', {msg: 'checkout_request'});
+				}
+
+				// receive data on `add_to_cart_response` channel
 				socket.on('add_to_cart_response', function(payload) {
 					console.log(payload);
-				});				
-			</script>
+				});
 
+				// receive data on `checkout_response` channel
+				socket.on('checkout_response', function(payload) {
+					console.log(payload);
+				});
+			</script>
+			<!-- end test ws -->
 
 			{% endblock %}
 		</main>
