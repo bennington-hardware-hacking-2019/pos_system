@@ -1,4 +1,22 @@
 # -*- coding: utf-8 -*-
+import datetime
+import psycopg2
+import psycopg2.extras # we need a dictionary for each row
+
+DATABASE = 'tapa'
+
+class DB(object):
+	def __init__(self):
+		# uses our DATABASE variable to set the dbname and create a connection
+		self.conn = psycopg2.connect("dbname='{0}'".format(DATABASE))
+
+	def setup(self):
+		"""
+		FIXME
+		"""
+		# print("db is setting up")
+		pass
+# -*- coding: utf-8 -*-
 
 import datetime
 import psycopg2
@@ -101,6 +119,23 @@ class DB(object):
 		cur.close()
 		return item
 
+	def add_item(self,tag,name,desc,cost):
+		"""
+		adds an item to the DB (for admin)
+		returns true if successful
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			INSERT INTO item
+			(tag,item,description,cost)
+			VALUES
+			(%s,%s,%s,%s)
+			""",
+			(tag,name,desc,cost)
+		)
+		return True
+
 	def sell_items(self, tags, sale_index):
 		"""
 		add sale_index to items
@@ -121,8 +156,17 @@ class DB(object):
 			UPDATE item
 			SET sale_index = %s
 			WHERE tag = %s
+			RETURNING index
 			""",
 			(sale_index, tag,)
+		)
+		item_index = cur.fetchone()
+		cur.execute(
+			"""
+			DELETE FROM stock
+			WHERE item_index = %s
+			""",
+			(item_index,)
 		)
 		self.conn.commit()
 		cur.close()
