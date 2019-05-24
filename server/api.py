@@ -22,14 +22,14 @@ class Server(object):
 		self.db = db.DB()
 		self.payment_processor = payment_processor.PaymentProcessor()
 
-	def setup(self, sim=False):		
+	def setup(self, sim=False):
 		if sim:
 			self.tag_reader.sim_setup()
 			self.card_reader.sim_setup()
 		else:
 			self.tag_reader.setup()
 			self.card_reader.setup()
-		
+
 		self.db.setup()
 		self.payment_processor.setup()
 
@@ -54,10 +54,10 @@ class Server(object):
 
 			item = self.db.get_item(tag)
 			resp = {
-                                'item': item.get('item'),
-                                'description': item.get('description'),
-                                'cost': item.get('cost')
-                        }
+				'item': item.get('item'),
+				'description': item.get('description'),
+				'cost': item.get('cost')
+			}
 
 			emit('server response', resp)
 
