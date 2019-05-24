@@ -1,4 +1,4 @@
-{% extends base %}
+{% extends base.html.j2 %}
 {% set size = "s" %}
 {% block content %}
 <pre>{% for item in stock %}{{ item.item }}:	{{ item.cost }}{% endfor %}</pre>
