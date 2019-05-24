@@ -1,10 +1,13 @@
 {% extends "base.html.j2" %}
 {% set size = "s" %}
 {% block content %}
-<form action="index.html" method="post">
-	<input name="item" value="" type="text">
+<form method="post">
+	<label for="item">Item name</label>
+	<input name="name" value="" type="text">
+	<label for="desc">description</label>
 	<input name="desc" value="" type="text">
+	<label for="cost">cost</label>
 	<input name="cost" value="" type="number" step="0.01" min="0">
-	<input name="create" value="Create" type="submit">
+	<input name="add" value="Add" type="submit">
 </form>
 {% endblock %}
