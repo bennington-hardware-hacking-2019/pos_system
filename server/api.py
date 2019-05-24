@@ -78,19 +78,30 @@ class Server(object):
         def checkout_request(payload):
             print(payload)
 
+            cart = ""
+            total = 0
+            for k, v in payload.get("data").items():
+                cart += k + " "
+                # get rid of prefix $ and convert back to float
+                total += float(v[1:])
+
             # set checkout to False to stop the loop
             self.checkout = False
 
-            # send a response back to the client on `add_to_cart_response` channel
             resp = {
-                'msg': 'checkout_response'
+                "msg": "total is " + str(total)[:5] + " for " + cart
             }
+            # send a response back to the client on `add_to_cart_response` channel
             emit('checkout_response', resp)
 
         @self.app.route('/')
         def index():
-            # FIXME - why suffix j2? why variable Oy?
+            # FIXME - suffix .j2 instead of .html? variable Oy?
             return render_template("base.html.j2", variable="Oy")
+
+        @self.app.route('/checkout')
+        def checkout():
+            return render_template('checkout.html')
 
         @self.app.route('/help')
         def help():
