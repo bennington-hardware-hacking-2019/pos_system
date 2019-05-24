@@ -1,6 +1,0 @@
-nose
-stripe
-psycopg2
-flask
-flask-socketio
-eventlet
