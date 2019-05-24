@@ -33,7 +33,7 @@ class Server(object):
 
 		@self.app.route('/')
 		def index():
-			return render_template("index.html.j2")
+			return render_template("base.html.j2")
 
 		@self.app.route('/cart')
 		def cart():
@@ -77,6 +77,7 @@ class Server(object):
 			#get the pin from the login form - temporary
 			pin = int(request.form['pin'])
 			#if password/card verified
+			#here Hoanh!
 			if (pin == 123):
 				session['username'] = 'admin' #Temporary
 				stock = self.db.get_stock()
@@ -88,10 +89,14 @@ class Server(object):
 		def add():
 			if 'username' in session:
 				if request.method == 'POST':
+					#Here hoanh!
+					#tag = whaaaat
+					#dummy tag
+					tag = {1,0,68,0,7,4,137,16,98,101,96}
 					name = request.form['name']
 					desc = request.form['desc']
 					cost = request.form['cost']
-					self.db.add_item(name, desc, cost)
+					self.db.add_item(tag,name, desc, cost)
 					return redirect(url_for('admin'))
 				elif request.method == 'GET':
 					return render_template('add.html.j2')
