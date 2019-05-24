@@ -1,0 +1,70 @@
+/*
+  Author: Julian Lambert
+  Date: May 8, 2019
+*/
+* {
+  margin: 0;
+  padding: 0;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: "Neutra Text", Futura, sans-serif;
+  color: #30232A;
+}
+h1, h2, h3 {
+  margin: 1em 2em;
+  font-weight: normal;
+}
+h1 {
+  font-size: 2em;
+}
+h2 {
+  font-weight: 1.5em;
+}
+h3 {
+  font-weight: 1em;
+}
+a {
+  color: inherit;
+}
+.ui {
+  font-family: Inconsolata, monospace;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+header, main, footer {
+  height: 33%;
+}
+header, main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.logo, form {
+  display: block;
+  margin: 0 auto;
+}
+section {
+  text-align: center;
+}
+main section h1 {
+  font-size: 2em;
+}
+footer section {
+  float: left;
+  height: 100%;
+  width: 33.33%;
+}
+footer section h1 {
+  margin: 2em 4em;
+}
+.black {
+  color: inherit;
+}
+.brown {
+  color: #803434;
+}
+.blue {
+  color: #9CD3E7;
+}

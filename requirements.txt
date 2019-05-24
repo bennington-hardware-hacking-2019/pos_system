@@ -1,4 +1,0 @@
-nose
-stripe
-psycopg2
-flask
