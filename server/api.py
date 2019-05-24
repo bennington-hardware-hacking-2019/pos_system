@@ -33,7 +33,7 @@ class Server(object):
 
 		@self.app.route('/')
 		def index():
-			return render_template("base.html.j2")
+			return render_template("index.html.j2")
 
 		@self.app.route('/cart')
 		def cart():
