@@ -1,0 +1,6 @@
+{% extends base %}
+{% set size = "s" %}
+{% block content %}
+<pre>{% for item in stock %}{{ item.item }}:	{{ item.cost }}{% endfor %}</pre>
+{% endblock %}
+{% block footer %}{% endblock %}

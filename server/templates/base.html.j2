@@ -4,14 +4,14 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		{% block head %}
-		{% set vue = false %}
-		<title>TAPA - {% block title %}{% endblock %}</title>
+		{% set socket = false %}
+		<title>TAPA - {% block title %}Thrift and Public Apparel{% endblock %}</title>
 		<link rel="stylesheet" href="{{ url_for('static', filename='tapa.css') }}">
-		{% if vue %}<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>{% endif %}
+		{% if socket %}
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+		{% endif %}
 		{% endblock %}
-
-		<!-- websocket script -->
-		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 	</head>
 	<body>
 		{% block body %}
@@ -21,39 +21,11 @@
 		</header>
 		<main>
 			{% block main %}
-<!-- 			<section>
+			<section>
 				{% block content %}
 				<h1>Tap an item to start checking out</h1>
 				{% endblock %}
-			</section> -->
-			<a href="proceed_to_checkout" title="proceed to checkout">
-				<section>
-					<h1>Proceed to checkout</h1>
-				</section>
-			</a>
-
-			<!-- test ws -->
-			<button onclick="server_request()">echo</button>
-			<script type="text/javascript" charset="utf-8">
-				var socket = io.connect('http://' + document.domain + ':' + location.port);
-				
-				// verify our websocket connection is established
-				socket.on('connect', function() {
-					console.log('websocket connected!');
-				});
-
-				// send data over `server request` channel
-				function server_request() {
-					socket.emit('server request', {msg: 'hello from client'});
-				}
-
-				// receive data on `server response` channel
-				socket.on('server response', function(payload) {
-					console.log(payload);
-				});				
-			</script>
-
-
+			</section>
 			{% endblock %}
 		</main>
 		<footer>

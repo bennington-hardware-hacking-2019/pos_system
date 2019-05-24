@@ -1,0 +1,10 @@
+{% extends base %}
+{% set size = "s" %}
+{% block content %}
+<form action="index.html" method="post">
+	<input name="item" value="" type="text">
+	<input name="desc" value="" type="text">
+	<input name="cost" value="" type="number" step="0.01" min="0">
+	<input name="create" value="Create" type="submit">
+</form>
+{% endblock %}
