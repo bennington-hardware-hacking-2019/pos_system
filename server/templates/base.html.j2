@@ -20,7 +20,12 @@
 		<main>
 			{%- block main %}
 			<section><h1>Welcome to TAPA</h1></section>
-			{%- endblock %}
+			<a href="checkout" title="Proceed to checkout">
+				<section>
+					<h1 class="ui black">Proceed to checkout</h1>
+				</section>
+			</a>
+			{% endblock %}
 		</main>
 		<footer>
 			{%- macro button(name, url=name, title=name|capitalize, color="black") %}

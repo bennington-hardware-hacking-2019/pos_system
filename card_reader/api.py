@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# FIXME sim
+# FIXME - sim
 # from RPi.GPIO import *
 import time
 
