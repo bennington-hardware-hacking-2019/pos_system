@@ -112,6 +112,7 @@ class Server(object):
 					#Here hoanh!
 					#tag = whaaaat
 					#dummy tag
+					#using random so we can create a lot of dummy data without error handling
 					import random
 					rand = random.randint(1,101)
 					tag = [1,0,68,0,7,4,137,16,98,101,rand]

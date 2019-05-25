@@ -1,8 +1,5 @@
 {%- extends "base.html.j2" %}
 {%- set size = "-s" %}
-{%- block head %}
-<script src="https://cdn.jsdelivr.net/npm/vuejs-smart-table@0.0.5/dist/smart-table.umd.js"></script>
-{%- endblock %}
 {%- block main %}
 <pre>{% for item in stock %}
 <a href="/stock/edit/{{ item.item_index }}">{{ item.item }}:	{{item.description}}	{{ item.cost }}</a>

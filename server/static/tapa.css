@@ -92,8 +92,3 @@ img {
 .brown { color: #803434 }
 .blue { color: #9CD3E7 }
 pre { font-family: Inconsolata, monospace }
-pre a:before {
-	border-radius: .5em;
-	border: 1px solid currentcolor;
-	padding: .25em;
-}
