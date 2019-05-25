@@ -27,6 +27,7 @@
             var $checkout = $('#checkout');
         
             <!-- dictionary to hold checkout items -->
+            // scheme: "item.name": {"tag": item.tag, "cost": item.cost}
             var checkout_payload = {}
             
             // verify our websocket connection is established
@@ -39,20 +40,20 @@
                 socket.emit('add_to_cart_request', {msg: 'add_to_cart_request'});
             }
 
-            // send data over `server request` channel
-            function checkout_request() {
-                socket.emit('checkout_request', {data: checkout_payload});
-            }
-
             // receive data on `add_to_cart_response` channel
             socket.on('add_to_cart_response', function(payload) {
                 <!-- update to the ui --> 
                 $cart.append('<div class="ui black">' + payload.item + ' - ' + payload.cost + '</div>');
 
                 <!-- add to checkout dictionary -->
-                checkout_payload[payload.item] = payload.cost
+                checkout_payload[payload.item] = {"tag": payload.tag, "cost": payload.cost}
                 console.log(payload);
             });
+
+            // send data over `server request` channel
+            function checkout_request() {
+                socket.emit('checkout_request', {data: checkout_payload});
+            }
 
             // receive data on `checkout_response` channel
             socket.on('checkout_response', function(payload) {

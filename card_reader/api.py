@@ -62,5 +62,5 @@ class Wiegand(object):
 
 	def sim_read(self):
 		"""FIXME - simulate reading, only used for testing purposes"""
-		time.sleep(rest)
+		time.sleep(1)
 		return 7114

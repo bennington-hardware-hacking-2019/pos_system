@@ -3,6 +3,7 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import SocketIO, join_room, emit
 from threading import Lock
+from time import sleep
 
 import tag_reader
 import card_reader
@@ -44,7 +45,7 @@ class Server(object):
         # start serving http/websocket endpoints
         self.up()
 
-    def validate_card(self):
+    def validate_tag(self):
         """keep reading for nfc tag item, validate, send it back to the ui"""
         # set checkout to True to keep reading from tag
         self.checkout = True
@@ -57,13 +58,14 @@ class Server(object):
             item = self.db.get_item(tag)
             resp = {
                 'item': item.get('item'),
+                'tag': tag,
                 'description': item.get('description'),
                 'cost': item.get('cost')
             }
 
             print("adding item to the cart:", resp)
 
-            # send a response back to the client on `add_to_cart_response` channel
+            # send a response back to the ui client on `add_to_cart_response` channel
             emit('add_to_cart_response', resp)
 
     def up(self):
@@ -72,27 +74,71 @@ class Server(object):
         def add_to_cart_request(payload):
             print(payload)
 
-            self.socketio.start_background_task(self.validate_card())
+            self.socketio.start_background_task(self.validate_tag())
 
         @self.socketio.on('checkout_request')
         def checkout_request(payload):
+            # payload is sent by add_to_card_request.
             print(payload)
 
+            tags = []
             cart = ""
             total = 0
             for k, v in payload.get("data").items():
                 cart += k + " "
                 # get rid of prefix $ and convert back to float
-                total += float(v[1:])
+                total += float(v.get("cost")[1:])
+                tags.append(v.get("tag"))
 
             # set checkout to False to stop the loop
             self.checkout = False
 
-            resp = {
+            checkout_info = {
                 "msg": "total is " + str(total)[:5] + " for " + cart
             }
-            # send a response back to the client on `add_to_cart_response` channel
-            emit('checkout_response', resp)
+
+            # send a checkout info
+            emit('checkout_response', checkout_info)
+
+            # ask the customer to tap the bennington card against the reader
+            tap_card_info = {
+                "msg": "tap your bennington card to finish checking out"
+            }
+
+            sleep(1)
+            emit('checkout_response', tap_card_info)
+
+            card = self.card_reader.sim_read()
+            
+            # validate the card
+            if self.db.check_card(card):
+                # collect all the items
+                items = self.db.get_items(tags)
+
+                # make sale
+                self.db.make_sale(card, tags)
+
+                # send invoice to the customer
+                card_info = self.db.get_buyer(card)
+                name = card_info.get("name")
+                email = card_info.get("email")
+
+                charge_info = {
+                    "msg": "charging " + name + " (" + email + ")"
+                }
+                emit('checkout_response', charge_info)
+                
+                # FIXME - payment processing is not working yet. it might be because how we
+                # handle threading at the moment. need to look into this more. 
+                # charge_id = self.payment_processor.send_invoice(name, email, items)
+
+                # # check payment status
+                # if self.payment_processor.is_paid(charge_id):
+                #     pay_info = {
+                #         "msg": name + " has paid"
+                #     }
+                
+                #     emit('checkout_response', pay_info)
 
         @self.app.route('/')
         def index():

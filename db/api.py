@@ -263,7 +263,9 @@ class DB(object):
 			""",
 			(sale_index, tag,)
 		)
-		item_index = cur.fetchone()
+
+		# update stock once the item is sold
+		item_index = cur.fetchone().get("index")
 		cur.execute(
 			"""
 			DELETE FROM stock
@@ -287,7 +289,7 @@ class DB(object):
 			INSERT INTO sale (
 				bennington_id
 			) VALUES (%s)
-                        RETURNING index;
+                RETURNING index;
 			""",
 			(bennington_id,)
 		)
