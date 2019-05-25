@@ -1,9 +1,14 @@
 {% extends "base.html.j2" %}
-{% set size = "s" %}
-{% block content %}
-<form method="post" action="stock">
+{% block main %}
+<form method="post">
+	{%- if error %}
+	<a href=""><p class="ui brown">Wrong PIN</p></a>
+	{%- endif %}
 	<h2 class="ui">Admin Login</h2>
-	<input name="pin" value="123" type="text">
-	<input name="log" value="Enter" type="submit">
+	<input name="pin" value="12345" type="password" class="ui">
+	<input name="log" value="Login" type="submit" class="ui">
 </form>
+{% endblock %}
+{% block footer %}
+	{{- button("home", url="/", title="Cancel") }}
 {% endblock %}

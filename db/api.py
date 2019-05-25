@@ -1,22 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime
-import psycopg2
-import psycopg2.extras # we need a dictionary for each row
-
-DATABASE = 'tapa'
-
-class DB(object):
-	def __init__(self):
-		# uses our DATABASE variable to set the dbname and create a connection
-		self.conn = psycopg2.connect("dbname='{0}'".format(DATABASE))
-
-	def setup(self):
-		"""
-		FIXME
-		"""
-		# print("db is setting up")
-		pass
-# -*- coding: utf-8 -*-
 
 import datetime
 import psycopg2
@@ -47,6 +29,27 @@ class DB(object):
 		else:
 			# print("db successfully validated: ", card)
 			return True
+
+	def check_stock(self, item_index):
+		"""
+		check if an item is in stock (admin)
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		# get the buyer
+		cur.execute(
+			"""
+			SELECT item_index
+			FROM stock
+			WHERE item_index = %s;
+			""",
+			(item_index,)
+		)
+		result = cur.fetchone()
+		cur.close()
+		if result is not None:
+			return True
+		else:
+			return False
 
 	def get_buyer(self, card):
 		"""
@@ -119,7 +122,41 @@ class DB(object):
 		cur.close()
 		return item
 
-	def add_item(self,tag,name,desc,cost):
+	def get_item_by_index(self, index):
+		"""
+		get item information
+		returns an item dictionary
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			SELECT *
+			FROM item
+			WHERE item.index = %s
+			""",
+			(index,)
+		)
+		item = cur.fetchone()
+		cur.close()
+		return item
+
+	def get_all_items(self):
+		"""
+		get all the items including out of stock
+		returns an array of item dictionaries
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			SELECT index AS item_index, *
+			FROM item
+			"""
+		)
+		items = cur.fetchall()
+		cur.close()
+		return items
+
+	def add_item(self, tag, name, desc, cost):
 		"""
 		adds an item to the DB (for admin)
 		returns true if successful
@@ -131,9 +168,75 @@ class DB(object):
 			(tag,item,description,cost)
 			VALUES
 			(%s,%s,%s,%s)
+			RETURNING index
 			""",
 			(tag,name,desc,cost)
 		)
+		item_index = cur.fetchone().get("index")
+		cur.execute(
+			"""
+			INSERT INTO stock
+			(item_index)
+			VALUES
+			(%s)
+			""",
+			(item_index,)
+		)
+		self.conn.commit()
+		cur.close()
+		return True
+
+	def edit_item(self, index, name, desc, cost):
+		"""
+		edits an item in the DB (for admin)
+		returns true if successful
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			UPDATE item
+			SET (item,description,cost) = (%s,%s,%s)
+			WHERE index = (%s)
+			""",
+			(name,desc,cost,index)
+		)
+		self.conn.commit()
+		cur.close()
+		return True
+
+	def unstock_item(self, index):
+		"""
+		removes an item from stock (for admin)
+		returns true if successful
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			DELETE FROM stock
+			WHERE item_index = (%s)
+			""",
+			(index,)
+		)
+		self.conn.commit()
+		cur.close()
+		return True
+
+	def restock_item(self, index):
+		"""
+		moves an item to stock (for admin)
+		returns true if successful
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			INSERT INTO stock
+			(item_index)
+			VALUES (%s)
+			""",
+			(index)
+		)
+		self.conn.commit()
+		cur.close()
 		return True
 
 	def sell_items(self, tags, sale_index):

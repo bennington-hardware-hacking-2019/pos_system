@@ -1,4 +1,16 @@
 {% extends "base.html.j2" %}
-{% block content %}
-<h1>How to use this kiosk....</h1>
+{% block main %}
+<section>
+	<h1>How to use this kiosk</h1>
+	<ol>
+		<li>Tap "Tap here to checkout"</li>
+		<li>Tap <em>TAPA tags</em> on the <em>tag_reader</em> to add items to the cart</li>
+		<li>Tap "Buy items" to purchase your items</li>
+		<li>Tap your <em>Bennington Id card</em> on the <em>card_reader</em></li>
+		<li>Check your Bennington email account and pay online</li>
+	</ol>
+</section>
+{% endblock %}
+{% block footer %}
+	{{- button("home", url="/") }}
 {% endblock %}

@@ -1,9 +1,23 @@
 {% extends "base.html.j2" %}
-{% block content %}
-<h1>What is TAPA?</h1>
-<p>Tapa is a rad lil thrift store that has an awesome legacy</p>
-<h2>Mission</h2>
-<p>...</p>
-<h2>Legacy</h2>
-<p>...</p>
+{% block main %}
+<section>
+	<section>
+		<h1>What is TAPA?</h1>
+		<p>A beloved campus thrift store with an awesome legacy</p>
+	</section>
+	<section>
+		<h2>Mission</h2>
+		<p>Bennington College's one and only Thrift Store, TAPA fights clothing waste on campus, while providing our campus community with affordable clothing and more. Brought to you by SAEJ (Student Action for Environmental Justice), Student Life, and Buildings & Grounds!</p>
+	</section>
+	<section>
+		<h2>Legacy</h2>
+		<p>TAPA first opened on April 2nd, 2016
+			<br>It was briefly renamed Greatwill in 2017
+			<br>Read about TAPA's opening here:</p>
+		<img src="{{ url_for('static', filename='images/legacy.png') }}" alt="https://is.gd/FuKXIN">
+	</section>
+</section>
+{% endblock %}
+{% block footer %}
+	{{- button("home", url="/") }}
 {% endblock %}

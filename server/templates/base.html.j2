@@ -3,53 +3,36 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		{% block head %}
-		{% set socket = false %}
 		<title>TAPA - {% block title %}Thrift and Public Apparel{% endblock %}</title>
 		<link rel="stylesheet" href="{{ url_for('static', filename='tapa.css') }}">
-		{% if socket %}
-		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		{%- if socket|default(False) %}
+		<script src="https://cdn.jsdelivr.net/npm/vue/"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-		{% endif %}
-		{% endblock %}
+		{%- endif %}
+		{%- block head %}
+		{%- endblock %}
 	</head>
-	<body>
-		{% block body %}
-		{% set size = "m" %}
+	<body class="{{ size|default('-m') }}">
 		<header>
-			<img class="logo" src="{{ url_for('static', filename='images/logo-{0}.png'.format(size)) }}" alt="TAPA Logo" title="TAPA — Thrift and Public Apparel">
+				<img class="logo" src="{{ url_for('static', filename='images/logo{0}.png'.format(size|default('-m'))) }}" alt="TAPA Logo" title="TAPA — Thrift and Public Apparel">
 		</header>
 		<main>
-			{% block main %}
-			<section>
-				{% block content %}
-				<h1>Tap an item to start checking out</h1>
-				{% endblock %}
-			</section>
-			{% endblock %}
+			{%- block main %}
+			<section><h1>Welcome to TAPA</h1></section>
+			{%- endblock %}
 		</main>
 		<footer>
-			{% block footer %}
-			<a href="login" title="Update the inventory">
+			{%- macro button(name, url=name, title=name|capitalize, color="black") %}
+			<a href="{{url}}" title="{{title}}" class="{{color}}">
 				<section>
-					<h3 class="ui black">Admin Login</h3>
-					<img class="icon" src="{{ url_for('static', filename='images/login.png') }}" alt="Login icon">
+					<img src="{{ url_for('static', filename='images/{0}.png'.format(name)) }}" alt="{{title}} icon">
+					<h3 class="ui">{{title}}</h3>
 				</section>
 			</a>
-			<a href="help" title="Learn how to checkout">
-				<section>
-					<h3 class="ui brown">Show Me How</h3>
-					<img class="icon" src="{{ url_for('static', filename='images/help.png') }}" alt="Question Mark icon">
-				</section>
-			</a>
-			<a href="about" title="Learn about TAPA">
-				<section>
-					<h3 class="ui blue">What is TAPA?</h3>
-					<img class="icon" src="{{ url_for('static', filename='images/info.png') }}" alt="Information icon">
-				</section>
-			</a>
-			{% endblock %}
+			{%- endmacro %}
+			{%- block footer %}
+				{{- button("home", url="/") }}
+			{%- endblock %}
 		</footer>
-		{% endblock %}
 	</body>
 </html>

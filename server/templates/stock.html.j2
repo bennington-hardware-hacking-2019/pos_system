@@ -1,8 +1,19 @@
-{% extends "base.html.j2" %}
-{% set size = "s" %}
-{% block content %}
+{%- extends "base.html.j2" %}
+{%- set size = "-s" %}
+{%- block head %}
+<script src="https://cdn.jsdelivr.net/npm/vuejs-smart-table@0.0.5/dist/smart-table.umd.js"></script>
+{%- endblock %}
+{%- block main %}
 <pre>{% for item in stock %}
-{{ item.item }}:	{{ item.cost }}
+<a href="/stock/edit/{{ item.item_index }}">{{ item.item }}:	{{item.description}}	{{ item.cost }}</a>
 {% endfor %}</pre>
 {% endblock %}
-{% block footer %}{% endblock %}
+{% block footer %}
+	{{- button("home", url="/logout", title="Logout")}}
+	{% if all %}
+	{{- button("stock", url="/stock", title="View Stock", color="brown")}}
+	{% else %}
+	{{- button("all", url="/stock/all", title="View All", color="brown")}}
+	{% endif %}
+	{{- button("add", url="/stock/add", title="Add", color="blue") }}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html.j2" %}
+{% set socket = True %}
+{% set size = '-s' %}
+{% block main %}
+<section>
+	<h1>Tap items on the <em>tag_reader</em> to add them to your cart</h1>
+</section>
+{% endblock %}
+{% block footer %}
+	{{- button("cancel", url="/") }}
+	{{- button("remove", url="#", title="Remove Items", color="brown") }}
+	{{- button("pay", url="#", color="blue") }}
+{% endblock %}
