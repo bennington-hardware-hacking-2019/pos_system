@@ -1,0 +1,94 @@
+/*
+Author: Julian Lambert
+Date: May 24, 2019
+*/
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	box-shadow: 0 0 0 1px hsla(210, 100%, 50%, 0.5);
+}
+body:hover * { box-shadow: none }
+html,
+body {
+	width: 100%;
+	height: 100%;
+	font-family: "Neutra Text", Futura, sans-serif;
+	color: #30232A;
+}
+header,
+main,
+footer {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	overflow: scroll;
+}
+footer { height: 16.5% }
+.-l header { height: 24.75% }
+.-l main { height: 57.75% }
+.-m header { height: 16.5% }
+.-m main { height: 66% }
+.-s header { height: 8.25% }
+.-s main { height: 74.25% }
+section,
+form {
+	display: flex;
+	align-items: center;
+	align-content: center;
+	justify-content: flex-start;
+}
+main section,
+form {
+	flex-flow: column wrap;
+	max-height: 100%;
+	padding: .5em;
+}
+form {
+	font-family: Inconsolata, monospace;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+input {
+	margin: .5em;
+	border-radius: .5em;
+	border: 4px solid currentcolor;
+	padding: .5em;
+	font-size: 1em;
+	background: white;
+	color: #30232A;
+	font-family: Inconsolata, monospace;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+input:focus,
+input:active { color: #9CD3E7 }
+h1,
+h2,
+h3 {
+	margin: .5em 1em;
+	font-weight: normal;
+}
+h1 { font-size: 2em }
+h2 { font-size: 1.5em }
+h3 { font-size: 1em }
+p { max-width: 18em }
+li { margin: 1.5em }
+a {
+	color: inherit;
+	text-decoration: none;
+	box-shadow: 0 0 0 1em lavender inset;
+}
+img {
+	padding: .5em;
+	max-width: 100%;
+	max-height: 100%;
+}
+.ui {
+	font-family: Inconsolata, monospace;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+.brown { color: #803434 }
+.blue { color: #9CD3E7 }
+pre { font-family: Inconsolata, monospace }

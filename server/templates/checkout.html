@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TAPA — Checkout</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='tapa.css') }}">
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  </head>
+  <body>
+    <header>
+    </header>
+    <main>
+		{% block main %}
+
+        <div class="container" id="cart"></div>
+        <div class="container" id="checkout"></div>
+
+        <script type="text/javascript" charset="utf-8">
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+            <!-- refer to id cart and checkout button above -->
+            var $cart = $('#cart');
+            var $checkout = $('#checkout');
+        
+            <!-- dictionary to hold checkout items -->
+            var checkout_payload = {}
+            
+            // verify our websocket connection is established
+            socket.on('connect', function() {
+                console.log('websocket connected!');
+            });
+
+            // send data over `server request` channel
+            function add_to_cart_request() {
+                socket.emit('add_to_cart_request', {msg: 'add_to_cart_request'});
+            }
+
+            // send data over `server request` channel
+            function checkout_request() {
+                socket.emit('checkout_request', {data: checkout_payload});
+            }
+
+            // receive data on `add_to_cart_response` channel
+            socket.on('add_to_cart_response', function(payload) {
+                <!-- update to the ui --> 
+                $cart.append('<div class="ui black">' + payload.item + ' - ' + payload.cost + '</div>');
+
+                <!-- add to checkout dictionary -->
+                checkout_payload[payload.item] = payload.cost
+                console.log(payload);
+            });
+
+            // receive data on `checkout_response` channel
+            socket.on('checkout_response', function(payload) {
+                $checkout.append('<br>');
+                $checkout.append('<div class="ui brown">' + payload.msg + '</div>');
+                console.log(payload);
+            });
+        </script>
+		{% endblock %}
+    </main>
+    <footer>
+        <a onclick="add_to_cart_request()" title="Add items to cart">
+            <h3 class="ui black">Scan for items</h3>
+        </a>
+        <a onclick="checkout_request()" title="Checkout<">
+            <h3 class="ui black">Checkout</h3>
+        </a>
+    </footer>
+  </body>
+</html>

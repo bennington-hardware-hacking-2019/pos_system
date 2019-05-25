@@ -1,0 +1,12 @@
+{% extends "base.html.j2" %}
+{% set size = "-l" %}
+{% block main %}
+			<a href="cart"><section>
+				<h1>Tap here to checkout</h1>
+			</section></a>
+{%- endblock %}
+{%- block footer %}
+	{{- button("login", title="Admin Login") }}
+	{{- button("help", color="brown") }}
+	{{- button("about", color="blue") }}
+{%- endblock %}

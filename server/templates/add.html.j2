@@ -1,0 +1,16 @@
+{% extends "base.html.j2" %}
+{% set size = "-s" %}
+{% block main %}
+<form method="post">
+	<label for="item">Item name</label>
+	<input name="item" value="" type="text">
+	<label for="desc">description</label>
+	<input name="desc" value="" type="text">
+	<label for="cost">cost</label>
+	<input name="cost" value="" type="number" step="0.01" min="0">
+	<input name="add" value="Add" type="submit">
+</form>
+{% endblock %}
+{% block footer %}
+	{{- button("cancel", url="/stock") }}
+{% endblock %}

@@ -2,6 +2,7 @@
 
 from . import register
 from .smbus2.smbus2 import SMBus, i2c_msg
+from random import randint
 
 import time
 import logging
@@ -19,7 +20,8 @@ class PN532(object):
         self.address = register.PN532_DEFAULT_ADDRESS
 
         # smbus object
-        self.bus = SMBus(1)
+        # FIXME - sim
+        # self.bus = SMBus(1)
 
         # logger object
         self.logger = logging.getLogger()
@@ -57,12 +59,12 @@ class PN532(object):
                 # be used for validation in the future
                 return read[9:]
 
-
     def sam_config(self):
         """send SAMConfiguration command"""
         self.write_addr(
             construct_frame([register.PN532_COMMAND_SAMCONFIGURATION, 0x01, 0x01, 0x00])
         )
+        
         self.read_addr(BLOCK_SIZE)
 
     def in_list_passive_target(self):
@@ -70,6 +72,7 @@ class PN532(object):
         self.write_addr(
             construct_frame([register.PN532_COMMAND_INLISTPASSIVETARGET, 0x01, 0x00])
         )
+        
         self.read_addr(BLOCK_SIZE)
 
     def write_addr(self, data):
@@ -93,32 +96,40 @@ class PN532(object):
         self.logger.debug("read_addr: %s", buf)
         return buf
 
-    def simulate_setup(self):
+    def sim_setup(self):
         """FIXME - simulate setup, only used for testing purposes"""
-        return [100, 0, 0]
+        pass
 
-    def simulate_read(self):
+    def sim_read(self):
         """FIXME - simulate reading, only used for testing purposes"""
-        return [100, 0, 0]
+        time.sleep(1)
+        result = [
+            [1, 0, 68, 0, 7, 4, 137, 16, 98, 101, 96],
+            [1, 0, 68, 0, 7, 4, 187, 16, 122, 101, 96],
+            [1, 0, 68, 0, 7, 4, 53, 205, 106, 101, 96],
+            [1, 0, 68, 0, 7, 4, 29, 208, 106, 101, 96],
+            [1, 0, 68, 0, 7, 4, 15, 206, 106, 101, 96]
+        ]
 
+        return result[randint(0, len(result) - 1)]
 
 def construct_frame(data):
-    """construct frame for communicating between host controller and pn532"""
-    # begin with 6-bytes frame structure
-    buf = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-    buf[0] = register.PN532_PREAMBLE
-    buf[1] = register.PN532_STARTCODE1
-    buf[2] = register.PN532_STARTCODE2
-    buf[3] = len(data) + 1           # number of bytes in data and frame identifier field
-    buf[4] = (~buf[3] & 0xFF) + 0x01 # packet length checksum
-    buf[5] = register.PN532_HOSTTOPN532
+        """construct frame for communicating between host controller and pn532"""
+        # begin with 6-bytes frame structure
+        buf = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
+        buf[0] = register.PN532_PREAMBLE
+        buf[1] = register.PN532_STARTCODE1
+        buf[2] = register.PN532_STARTCODE2
+        buf[3] = len(data) + 1		   # number of bytes in data and frame identifier field
+        buf[4] = (~buf[3] & 0xFF) + 0x01 # packet length checksum
+        buf[5] = register.PN532_HOSTTOPN532
 
-    tmp_sum = register.PN532_HOSTTOPN532
-    for b in data:
-        tmp_sum += b
-        buf.append(b)
+        tmp_sum = register.PN532_HOSTTOPN532
+        for b in data:
+            tmp_sum += b
+            buf.append(b)
 
-    buf.append((~tmp_sum & 0xFF) + 0x01) # data checksum
-    buf.append(register.PN532_POSTAMBLE)
+        buf.append((~tmp_sum & 0xFF) + 0x01) # data checksum
+        buf.append(register.PN532_POSTAMBLE)
 
-    return buf
+        return buf

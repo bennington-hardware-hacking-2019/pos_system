@@ -1,0 +1,16 @@
+{%- extends "base.html.j2" %}
+{%- set size = "-s" %}
+{%- block main %}
+<pre>{% for item in stock %}
+<a href="/stock/edit/{{ item.item_index }}">{{ item.item }}:	{{item.description}}	{{ item.cost }}</a>
+{% endfor %}</pre>
+{% endblock %}
+{% block footer %}
+	{{- button("home", url="/logout", title="Logout")}}
+	{% if all %}
+	{{- button("stock", url="/stock", title="View Stock", color="brown")}}
+	{% else %}
+	{{- button("all", url="/stock/all", title="View All", color="brown")}}
+	{% endif %}
+	{{- button("add", url="/stock/add", title="Add", color="blue") }}
+{% endblock %}
