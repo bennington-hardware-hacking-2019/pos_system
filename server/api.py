@@ -98,7 +98,7 @@ class Server(object):
 
 			# ask the customer to tap the bennington card against the reader
 			tap_card_info = {
-					"msg": "tap your bennington card to finish checking out"
+				"msg": "tap your bennington card to finish checking out"
 			}
 
 			sleep(1)
