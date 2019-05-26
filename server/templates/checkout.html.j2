@@ -1,0 +1,15 @@
+{% extends "base.html.j2" %}
+{% set socket = True %}
+{% set size = '-s' %}
+{% block main %}
+<h2>Tap your <strong>Bennington Id</strong> on the <em>card_reader</em> to get a payment link</h2>
+<section id="cart">
+</section>
+{% endblock %}
+{% block footer %}
+	{{- button("edit", url="/cart", title="Edit Cart", color="brown") }}
+	{{- button("pay", url="/pay", title="Pay", color="blue") }}
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename='socket.js') }}"></script>
+{% endblock %}
