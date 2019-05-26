@@ -14,7 +14,9 @@
 	</head>
 	<body class="{{ size|default('-m') }}">
 		<header>
+			{%- block header %}
 				<img class="logo" src="{{ url_for('static', filename='images/logo{0}.png'.format(size|default('-m'))) }}" alt="TAPA Logo" title="TAPA — Thrift and Public Apparel">
+			{%- endblock %}
 		</header>
 		<main>
 			{%- block main %}
