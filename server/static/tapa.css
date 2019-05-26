@@ -27,6 +27,9 @@ footer {
 	align-items: center;
 	overflow: scroll;
 }
+header {
+	justify-content: center;
+}
 footer { height: 16.5% }
 .-l header { height: 24.75% }
 .-l main { height: 57.75% }
@@ -35,9 +38,11 @@ footer { height: 16.5% }
 .-s header { height: 8.25% }
 .-s main {
 	height: 74.25%;
-	align-items: flex-start;
+	flex-flow: column;
+	justify-content: flex-start;
 }
 section,
+.item,
 form {
 	display: flex;
 	align-items: center;
@@ -45,6 +50,7 @@ form {
 	justify-content: flex-start;
 }
 main section,
+.item,
 form {
 	flex-flow: column wrap;
 	max-height: 100%;
@@ -107,4 +113,16 @@ table a {
 th:nth-of-type(3),
 td:nth-of-type(3) {
 	text-align: right !important;
+}
+.item {
+	margin: .5em;
+	border-radius: .5em;
+	border: 4px solid currentcolor;
+	padding: .5em;
+	font-size: 1em;
+	background: white;
+}
+.item.remove {
+	background: #803434;
+	color: white;
 }
