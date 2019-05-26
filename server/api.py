@@ -39,6 +39,7 @@ class Server(object):
 		self.payment_processor.setup()
 
 		# start serving all endpoints
+		self.sockets()
 		self.routes()
 
 	def validate_tag(self):
@@ -64,10 +65,11 @@ class Server(object):
 						# send a response back to the ui client on `add_to_cart_response` channel
 						emit('add_to_cart_response', resp)
 
-	def up(self):
-		"""http/websocket routes definitions"""
 		@self.socketio.on('add_to_cart_request')
 		def add_to_cart_request(payload):
+	def sockets(self):
+		"""websocket routes definitions"""
+
 			print(payload)
 
 			self.socketio.start_background_task(self.validate_tag())
