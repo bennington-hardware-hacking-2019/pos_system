@@ -143,7 +143,7 @@ class Server(object):
 		@self.app.route('/login', methods=['GET', 'POST'])
 		def login():
 			if 'admin' in session:
-				return redirect(url_for('stock'))
+				return redirect(url_for('items'))
 			elif request.method == 'POST':
 				# long term - postgres from the card_reader
 				# temporary - use a pin
@@ -167,21 +167,21 @@ class Server(object):
 		@self.app.route('/items')
 		def items():
 			if 'admin' in session:
-				return render_template('items.html.j2', items=self.db.get_stock(), in='stock')
+				return render_template('items.html.j2', items=self.db.get_stock())
 			else:
 				return redirect(url_for('login'))
 
 		@self.app.route('/items/held')
 		def held():
 			if 'admin' in session:
-				return render_template('items.html.j2', items=self.db.get_held(), in='held')
+				return render_template('held.html.j2', items=self.db.get_held())
 			else:
 				return redirect(url_for('login'))
 
 		@self.app.route('/items/sold')
 		def sold():
 			if 'admin' in session:
-				return render_template('items.html.j2', items=self.db.get_sold(), in='sold')
+				return render_template('sold.html.j2', items=self.db.get_sold())
 			else:
 				return redirect(url_for('login'))
 
@@ -199,9 +199,9 @@ class Server(object):
 					name = request.form['item']
 					desc = request.form['desc']
 					cost = request.form['cost']
-					stock = request.form['stock']
-					self.db.add_item(tag, name, desc, cost, stock)
-					return redirect(url_for('stock'))
+					in_stock = 'in_stock' in request.form
+					self.db.add_item(tag, name, desc, cost, in_stock)
+					return redirect(url_for('items'))
 				elif request.method == 'GET':
 					return render_template('add.html.j2')
 			else:
@@ -210,20 +210,23 @@ class Server(object):
 		@self.app.route('/items/edit/<index>', methods=['GET', 'POST'])
 		def edit(index):
 			if 'admin' in session:
-				stock = self.db.check_stock(index)
-				if request.method == 'GET':
-					item = self.db.get_item_by_index(index)
-					return render_template('edit.html.j2', item=item, stock=stock)
-				elif request.method == 'POST':
-					index = int(index)
-					name = request.form['item']
-					desc = request.form['desc']
-					cost = request.form['cost']
-					self.db.edit_item(index, name, desc, cost)
-					if stock:
-						return redirect(url_for('items'))
-					else:
-						return redirect(url_for('all'))
+				index = int(index)
+				item = self.db.get_item_by_index(index)
+				if item.get("sale_index") is None:
+					in_stock = self.db.check_item(index)
+					if request.method == 'GET':
+						return render_template('edit.html.j2', item=item, in_stock=in_stock)
+					elif request.method == 'POST':
+						name = request.form['item']
+						desc = request.form['desc']
+						cost = request.form['cost']
+						self.db.edit_item(index, name, desc, cost)
+						if stock:
+							return redirect(url_for('items'))
+						else:
+							return redirect(url_for('held'))
+				else:
+					return redirect(url_for('login'))
 			else:
 				return redirect(url_for('login'))
 
@@ -231,7 +234,7 @@ class Server(object):
 		def hold(index):
 			if 'admin' in session:
 				index = str(int(index))
-				self.db.unstock_item(index)
+				self.db.hold_item(index)
 				return redirect(url_for('items'))
 			else:
 				return redirect(url_for('login'))
