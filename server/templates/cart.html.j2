@@ -1,63 +1,15 @@
 {% extends "base.html.j2" %}
 {% set socket = True %}
-{% set size = '-m' %}
+{% set size = '-s' %}
 {% block main %}
-<section>
-	<h1>Tap items on the <em>tag_reader</em> to add them to your cart</h1>
-	<div class="container" id="cart"></div>
-	<div class="container" id="checkout"></div>
-</section>
+<h2 id="tutorial">Tap <strong>TAPA tags</strong> on the <em>tag_reader</em> to add items to your cart</h2>
+<section id="cart"></section>
 {% endblock %}
 {% block footer %}
 	{{- button("cancel", url="/") }}
-	{{- button("remove", url="#", title="Remove Items", color="brown") }}
-	{{- button("add", url="javascript:add()", color="blue") }}
-	{{- button("pay", url="javascript:pay()", color="blue") }}
+	{{- button("remove", url="javascript:remove()", title="Remove Selected Items", color="brown") }}
+	{{- button("pay", url="/checkout", title="Checkout", color="blue") }}
 {% endblock %}
 {% block script %}
-<script>
-		var socket = io.connect('http://' + document.domain + ':' + location.port);
-
-		// refer to id cart and checkout button above
-		// FIXME ui this stuff
-		var $cart = $('#cart');
-		var $checkout = $('#checkout');
-
-		// dictionary to hold checkout items
-		var checkout_payload = {}
-
-		// verify our websocket connection is established
-		socket.on('connect', function() {
-				console.log('websocket connected!');
-		});
-
-		// send data over `server request` channel
-		function add() {
-				socket.emit('add_request', {msg: 'add_request'});
-		}
-
-		// send data over `server request` channel
-		function pay() {
-				socket.emit('pay_request', {data: checkout_payload});
-		}
-
-		// receive data on `add_response` channel
-		socket.on('add_response', function(payload) {
-				// update to the ui
-				// FIXME ui this stuff
-				$cart.append('<div class="ui black">' + payload.name + ' - ' + payload.cost + '</div>');
-
-				// add to checkout dictionary
-				checkout_payload[payload.name] = payload.cost
-				console.log(payload);
-		});
-
-		// receive data on `pay_response` channel
-		socket.on('pay_response', function(payload) {
-				// FIXME ui this stuff
-				$checkout.append('<br>');
-				$checkout.append('<div class="ui brown">' + payload.msg + '</div>');
-				console.log(payload);
-		});
-</script>
+<script src="{{ url_for('static', filename='cart.js') }}"></script>
 {% endblock %}
