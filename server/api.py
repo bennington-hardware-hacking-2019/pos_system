@@ -65,13 +65,12 @@ class Server(object):
 						# send a response back to the ui client on `add_to_cart_response` channel
 						emit('add_to_cart_response', resp)
 
-		@self.socketio.on('add_to_cart_request')
-		def add_to_cart_request(payload):
 	def sockets(self):
 		"""websocket routes definitions"""
 
+		@self.socketio.on('cart_request')
+		def cart_request(payload):
 			print(payload)
-
 			self.socketio.start_background_task(self.validate_tag())
 
 		@self.socketio.on('checkout_request')
@@ -137,50 +136,6 @@ class Server(object):
 				#		 }
 
 				#		 emit('checkout_response', pay_info)
-
-		@self.socketio.on('add_request')
-		def add_request(payload):
-			print(payload)
-
-			# TODO - check for a tag reading
-			# check if the item exists in the database
-
-			# send a response back to the client on `server response` channel
-			# check for a tag reading
-			tag = self.tag_reader.sim_read()
-
-			item = self.db.get_item(tag)
-			resp = {
-				'name': item.get('name'),
-				'description': item.get('description'),
-				'cost': item.get('cost')
-			}
-
-			emit('add_response', resp)
-
-		@self.socketio.on('pay_request')
-		def pay_request(payload):
-			print(payload)
-
-			# set checkout to False to stop the loop
-			self.checkout = False
-
-			cart = ""
-			total = 0
-			for k, v in payload.get("data").items():
-				cart += k + " "
-				# get rid of prefix $ and convert back to float
-				total += float(v[1:])
-
-			# set checkout to False to stop the loop
-			self.checkout = False
-
-			resp = {
-				"msg": "total is " + str(total)[:5] + " for " + cart
-			}
-			# send a response back to the client on `add_to_cart_response` channel
-			emit('pay_response', resp)
-		# end FIXME
 
 	def routes(self):
 		""" server routes """
