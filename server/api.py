@@ -180,6 +180,23 @@ class Server(object):
 			emit('pay_response', resp)
 		# end FIXME
 
+	def routes(self):
+		""" server routes """
+
+		@self.app.route('/')
+		def index():
+			return render_template("index.html.j2")
+
+		# FIXME websocket integration
+		# """http/websocket routes definitions"""
+		@self.app.route('/cart')
+		def cart():
+			return render_template("cart.html.j2")
+
+		@self.app.route('/checkout')
+		def checkout():
+			return render_template("checkout.html.j2")
+
 		@self.app.route('/help')
 		def help():
 			return render_template('help.html.j2')
@@ -187,6 +204,8 @@ class Server(object):
 		@self.app.route('/about')
 		def about():
 			return render_template('about.html.j2')
+
+		# ADMIN ROUTES #
 
 		@self.app.route('/login', methods=['GET', 'POST'])
 		def login():
