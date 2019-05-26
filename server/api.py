@@ -38,9 +38,10 @@ class Server(object):
 		self.db.setup()
 		self.payment_processor.setup()
 
-		# start serving http/websocket endpoints
+		# start serving all endpoints
 		self.routes()
 
+	# FIXME what is this function doing in the server api? might just be naming convention
 	def validate_card(self):
 		"""keep reading for nfc tag item, validate, send it back to the ui"""
 		# set checkout to True to keep reading from tag
@@ -66,8 +67,16 @@ class Server(object):
 	def routes(self):
 		""" server routes """
 
+		@self.app.route('/')
+		def index():
+			return render_template("index.html.j2")
+
 		# FIXME websocket integration
 		# """http/websocket routes definitions"""
+		@self.app.route('/cart')
+		def cart():
+			return render_template("cart.html.j2")
+
 		@self.socketio.on('add_to_cart_request')
 		def add_to_cart_request(payload):
 			print(payload)
@@ -116,15 +125,11 @@ class Server(object):
 			}
 
 			emit('add_to_cart_response', resp)
-		# end FIXME
 
 		@self.app.route('/checkout')
 		def checkout():
 			return render_template('checkout.html.j2')
-
-		@self.app.route('/')
-		def index():
-			return render_template("index.html.j2")
+		# end FIXME
 
 		@self.app.route('/help')
 		def help():
@@ -133,12 +138,6 @@ class Server(object):
 		@self.app.route('/about')
 		def about():
 			return render_template('about.html.j2')
-
-		# FIXME
-		@self.app.route('/cart')
-		def cart():
-			return render_template("cart.html.j2")
-		# end FIXME
 
 		@self.app.route('/login', methods=['GET', 'POST'])
 		def login():
