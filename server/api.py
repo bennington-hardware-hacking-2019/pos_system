@@ -39,7 +39,7 @@ class Server(object):
 		self.payment_processor.setup()
 
 		# start serving http/websocket endpoints
-		self.up()
+		self.routes()
 
 	def validate_card(self):
 		"""keep reading for nfc tag item, validate, send it back to the ui"""
@@ -63,8 +63,11 @@ class Server(object):
 			# send a response back to the client on `add_to_cart_response` channel
 			emit('add_to_cart_response', resp)
 
-	def up(self):
-		"""http/websocket routes definitions"""
+	def routes(self):
+		""" server routes """
+
+		# FIXME websocket integration
+		# """http/websocket routes definitions"""
 		@self.socketio.on('add_to_cart_request')
 		def add_to_cart_request(payload):
 			print(payload)
@@ -94,27 +97,6 @@ class Server(object):
 			# send a response back to the client on `add_to_cart_response` channel
 			emit('checkout_response', resp)
 
-
-		@self.app.route('/checkout')
-		def checkout():
-			return render_template('checkout.html.j2')
-
-		@self.app.route('/')
-		def index():
-			return render_template("index.html.j2")
-
-		@self.app.route('/help')
-		def help():
-			return render_template('help.html.j2')
-
-		@self.app.route('/about')
-		def about():
-			return render_template('about.html.j2')
-
-		@self.app.route('/cart')
-		def cart():
-			return render_template("cart.html.j2")
-
 		@self.socketio.on('add_to_cart_request')
 		def add_to_cart_request(payload):
 			print(payload)
@@ -134,6 +116,29 @@ class Server(object):
 			}
 
 			emit('add_to_cart_response', resp)
+		# end FIXME
+
+		@self.app.route('/checkout')
+		def checkout():
+			return render_template('checkout.html.j2')
+
+		@self.app.route('/')
+		def index():
+			return render_template("index.html.j2")
+
+		@self.app.route('/help')
+		def help():
+			return render_template('help.html.j2')
+
+		@self.app.route('/about')
+		def about():
+			return render_template('about.html.j2')
+
+		# FIXME
+		@self.app.route('/cart')
+		def cart():
+			return render_template("cart.html.j2")
+		# end FIXME
 
 		@self.app.route('/login', methods=['GET', 'POST'])
 		def login():
@@ -147,7 +152,7 @@ class Server(object):
 				# if pin/card verified
 				if pin is not None and pin == "12345":
 					session['admin'] = True
-					return redirect(url_for('stock'))
+					return redirect(url_for('items'))
 				else:
 					return render_template('login.html.j2', error=True)
 			else:
@@ -159,21 +164,28 @@ class Server(object):
 				session.clear()
 			return redirect(url_for('index'))
 
-		@self.app.route('/stock')
-		def stock():
+		@self.app.route('/items')
+		def items():
 			if 'admin' in session:
-				return render_template('stock.html.j2', stock = self.db.get_stock())
+				return render_template('items.html.j2', items=self.db.get_stock(), in='stock')
 			else:
 				return redirect(url_for('login'))
 
-		@self.app.route('/stock/all')
-		def all():
+		@self.app.route('/items/held')
+		def held():
 			if 'admin' in session:
-				return render_template('stock.html.j2', stock = self.db.get_all_items(), all = True)
+				return render_template('items.html.j2', items=self.db.get_held(), in='held')
 			else:
 				return redirect(url_for('login'))
 
-		@self.app.route('/stock/add', methods=['GET', 'POST'])
+		@self.app.route('/items/sold')
+		def sold():
+			if 'admin' in session:
+				return render_template('items.html.j2', items=self.db.get_sold(), in='sold')
+			else:
+				return redirect(url_for('login'))
+
+		@self.app.route('/items/add', methods=['GET', 'POST'])
 		def add():
 			if 'admin' in session:
 				if request.method == 'POST':
@@ -187,14 +199,15 @@ class Server(object):
 					name = request.form['item']
 					desc = request.form['desc']
 					cost = request.form['cost']
-					self.db.add_item(tag, name, desc, cost)
+					stock = request.form['stock']
+					self.db.add_item(tag, name, desc, cost, stock)
 					return redirect(url_for('stock'))
 				elif request.method == 'GET':
 					return render_template('add.html.j2')
 			else:
-				return redirect(url_for('login')) #needs testing
+				return redirect(url_for('login'))
 
-		@self.app.route('/stock/edit/<index>', methods=['GET', 'POST'])
+		@self.app.route('/items/edit/<index>', methods=['GET', 'POST'])
 		def edit(index):
 			if 'admin' in session:
 				stock = self.db.check_stock(index)
@@ -208,27 +221,27 @@ class Server(object):
 					cost = request.form['cost']
 					self.db.edit_item(index, name, desc, cost)
 					if stock:
-						return redirect(url_for('stock'))
+						return redirect(url_for('items'))
 					else:
 						return redirect(url_for('all'))
 			else:
 				return redirect(url_for('login'))
 
-		@self.app.route('/stock/un/<index>')
-		def unstock(index):
+		@self.app.route('/items/hold/<index>')
+		def hold(index):
 			if 'admin' in session:
 				index = str(int(index))
 				self.db.unstock_item(index)
-				return redirect(url_for('stock'))
+				return redirect(url_for('items'))
 			else:
 				return redirect(url_for('login'))
 
-		@self.app.route('/stock/re/<index>')
-		def restock(index):
+		@self.app.route('/items/stock/<index>')
+		def stock(index):
 			if 'admin' in session:
 				index = str(int(index))
-				self.db.restock_item(index)
-				return redirect(url_for('stock'))
+				self.db.stock_item(index)
+				return redirect(url_for('items'))
 			else:
 				return redirect(url_for('login'))
 
