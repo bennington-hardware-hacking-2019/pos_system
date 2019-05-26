@@ -77,14 +77,28 @@ class Server(object):
 		def cart():
 			return render_template("cart.html.j2")
 
-		@self.socketio.on('add_to_cart_request')
-		def add_to_cart_request(payload):
+		@self.socketio.on('add_request')
+		def add_request(payload):
 			print(payload)
 
-			self.socketio.start_background_task(self.validate_card())
+			# TODO - check for a tag reading
+			# check if the item exists in the database
 
-		@self.socketio.on('checkout_request')
-		def checkout_request(payload):
+			# send a response back to the client on `server response` channel
+			# check for a tag reading
+			tag = self.tag_reader.sim_read()
+
+			item = self.db.get_item(tag)
+			resp = {
+				'name': item.get('name'),
+				'description': item.get('description'),
+				'cost': item.get('cost')
+			}
+
+			emit('add_response', resp)
+
+		@self.socketio.on('pay_request')
+		def pay_request(payload):
 			print(payload)
 
 			# set checkout to False to stop the loop
@@ -104,31 +118,7 @@ class Server(object):
 				"msg": "total is " + str(total)[:5] + " for " + cart
 			}
 			# send a response back to the client on `add_to_cart_response` channel
-			emit('checkout_response', resp)
-
-		@self.socketio.on('add_to_cart_request')
-		def add_to_cart_request(payload):
-			print(payload)
-
-			# TODO - check for a tag reading
-			# check if the item exists in the database
-
-			# send a response back to the client on `server response` channel
-			# check for a tag reading
-			tag = self.tag_reader.sim_read()
-
-			item = self.db.get_item(tag)
-			resp = {
-				'item': item.get('item'),
-				'description': item.get('description'),
-				'cost': item.get('cost')
-			}
-
-			emit('add_to_cart_response', resp)
-
-		@self.app.route('/checkout')
-		def checkout():
-			return render_template('checkout.html.j2')
+			emit('pay_response', resp)
 		# end FIXME
 
 		@self.app.route('/help')
