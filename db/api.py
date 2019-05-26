@@ -172,9 +172,10 @@ class DB(object):
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cur.execute(
 			"""
-			SELECT *
+			SELECT item.*, sale.date_added as date_sold, sale.date_paid
 			FROM item
-			WHERE sale_index IS NOT NULL
+			JOIN sale
+			ON item.sale_index = sale.index
 			"""
 		)
 		items = cur.fetchall()
@@ -199,7 +200,7 @@ class DB(object):
 		cur.close()
 		return items
 
-	def add_item(self, tag, name, desc, cost, stock=True):
+	def add_item(self, tag, name, desc, cost, in_stock=True):
 		"""
 		adds an item to the DB (for admin)
 		returns true if successful
@@ -208,14 +209,14 @@ class DB(object):
 		cur.execute(
 			"""
 			INSERT INTO item
-			(tag,item,description,cost)
+			(tag,name,description,cost)
 			VALUES
 			(%s,%s,%s,%s)
 			RETURNING index
 			""",
 			(tag,name,desc,cost)
 		)
-		if stock:
+		if in_stock:
 			item_index = cur.fetchone().get("index")
 			cur.execute(
 				"""
@@ -239,7 +240,7 @@ class DB(object):
 		cur.execute(
 			"""
 			UPDATE item
-			SET (item,description,cost) = (%s,%s,%s)
+			SET (name,description,cost) = (%s,%s,%s)
 			WHERE index = (%s)
 			""",
 			(name,desc,cost,index)
