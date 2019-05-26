@@ -54,7 +54,7 @@ class Server(object):
 						# check if the item exists in the database
 						item = self.db.get_item(tag)
 						resp = {
-								'item': item.get('item'),
+								'name': item.get('name'),
 								'tag': tag,
 								'description': item.get('description'),
 								'cost': item.get('cost')
@@ -63,7 +63,7 @@ class Server(object):
 						print("adding item to the cart:", resp)
 
 						# send a response back to the ui client on `add_to_cart_response` channel
-						emit('add_to_cart_response', resp)
+						emit('cart_response', resp)
 
 	def sockets(self):
 		"""websocket routes definitions"""
