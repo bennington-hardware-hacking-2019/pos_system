@@ -41,41 +41,100 @@ class Server(object):
 		# start serving all endpoints
 		self.routes()
 
-	# FIXME what is this function doing in the server api? might just be naming convention
-	def validate_card(self):
-		"""keep reading for nfc tag item, validate, send it back to the ui"""
-		# set checkout to True to keep reading from tag
-		self.checkout = True
+	def validate_tag(self):
+				"""keep reading for nfc tag item, validate, send it back to the ui"""
+				# set checkout to True to keep reading from tag
+				self.checkout = True
 
-		while self.checkout:
-			# check for a tag reading
-			tag = self.tag_reader.sim_read()
+				while self.checkout:
+						# check for a tag reading
+						tag = self.tag_reader.sim_read()
 
-			# check if the item exists in the database
-			item = self.db.get_item(tag)
-			resp = {
-				'item': item.get('item'),
-				'description': item.get('description'),
-				'cost': item.get('cost')
+						# check if the item exists in the database
+						item = self.db.get_item(tag)
+						resp = {
+								'item': item.get('item'),
+								'tag': tag,
+								'description': item.get('description'),
+								'cost': item.get('cost')
+						}
+
+						print("adding item to the cart:", resp)
+
+						# send a response back to the ui client on `add_to_cart_response` channel
+						emit('add_to_cart_response', resp)
+
+	def up(self):
+		"""http/websocket routes definitions"""
+		@self.socketio.on('add_to_cart_request')
+		def add_to_cart_request(payload):
+			print(payload)
+
+			self.socketio.start_background_task(self.validate_tag())
+
+		@self.socketio.on('checkout_request')
+		def checkout_request(payload):
+			# payload is sent by add_to_card_request.
+			print(payload)
+
+			tags = []
+			cart = ""
+			total = 0
+			for k, v in payload.get("data").items():
+					cart += k + " "
+					# get rid of prefix $ and convert back to float
+					total += float(v.get("cost")[1:])
+					tags.append(v.get("tag"))
+
+			# set checkout to False to stop the loop
+			self.checkout = False
+
+			checkout_info = {
+					"msg": "total is " + str(total)[:5] + " for " + cart
 			}
 
-			print("adding item to the cart:", resp)
+			# send a checkout info
+			emit('checkout_response', checkout_info)
 
-			# send a response back to the client on `add_to_cart_response` channel
-			emit('add_to_cart_response', resp)
+			# ask the customer to tap the bennington card against the reader
+			tap_card_info = {
+					"msg": "tap your bennington card to finish checking out"
+			}
 
-	def routes(self):
-		""" server routes """
+			sleep(1)
+			emit('checkout_response', tap_card_info)
 
-		@self.app.route('/')
-		def index():
-			return render_template("index.html.j2")
+			card = self.card_reader.sim_read()
 
-		# FIXME websocket integration
-		# """http/websocket routes definitions"""
-		@self.app.route('/cart')
-		def cart():
-			return render_template("cart.html.j2")
+			# validate the card
+			if self.db.check_card(card):
+				# collect all the items
+				items = self.db.get_items(tags)
+
+				# make sale
+				self.db.make_sale(card, tags)
+
+				# send invoice to the customer
+				card_info = self.db.get_buyer(card)
+				name = card_info.get("name")
+				email = card_info.get("email")
+
+				charge_info = {
+						"msg": "charging " + name + " (" + email + ")"
+				}
+				emit('checkout_response', charge_info)
+
+				# FIXME - payment processing is not working yet. it might be because how we
+				# handle threading at the moment. need to look into this more.
+				# charge_id = self.payment_processor.send_invoice(name, email, items)
+
+				# # check payment status
+				# if self.payment_processor.is_paid(charge_id):
+				#		 pay_info = {
+				#				 "msg": name + " has paid"
+				#		 }
+
+				#		 emit('checkout_response', pay_info)
 
 		@self.socketio.on('add_request')
 		def add_request(payload):
