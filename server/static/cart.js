@@ -42,7 +42,11 @@ socket.on('cart_response', function(item) {
 		console.log(cart)
 		console.log(item.index in cart)
 
+<<<<<<< HEAD
 		if (!(item.index in cart)) {
+=======
+		if !(item.index in cart) {
+>>>>>>> a8f4ddc3015365ceda862d632acfb6b86be08a7a
 			// update to the ui
 			$cart.append(
 				"<div class=\"item\" id=\"" + item.index + "\">"
