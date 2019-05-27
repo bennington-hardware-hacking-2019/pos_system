@@ -19,7 +19,7 @@ class Server(object):
 		# initialize flask and socketio
 		self.app = Flask(__name__)
 		self.app.secret_key = 'yagabeatsTHO'
-		self.socketio = SocketIO(self.app, async_mode='eventlet')
+		self.socketio = SocketIO(self.app, logger=True, async_mode='eventlet')
 		self.cart = {}
 		self.add_tag = False
 		self.tag_reader = tag_reader.PN532()
