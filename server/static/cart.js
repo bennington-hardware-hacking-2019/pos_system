@@ -36,7 +36,7 @@ socket.on('cart_response', function(item) {
 		// 	$(this).toggleClass("remove");
 		// });
         // allow selecting
-        $("#"+item.index+"").on('click touch', function() {
+        $("#"+item.index).on('click touch', function() {
             $(this).toggleClass("remove");
         });
 
@@ -72,7 +72,7 @@ function sim_add() {
 	)
 
 	// allow selecting
-	$("#"+index+"").on('click touch', function() {
+	$("#"+index).on('click touch', function() {
 		$(this).toggleClass("remove");
 	});
 
