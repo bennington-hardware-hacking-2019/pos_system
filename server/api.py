@@ -94,9 +94,9 @@ class Server(object):
 			# save the cart
 			# FIXME when we make a sale empty the cart
 			self.cart = payload.get("data")
-			print(self.cart)
+			print("===> cart:", self.cart)
 
-                        # collect all the tags of items in the cart
+            # collect all the tags of items in the cart
 			tags = []
 			total = 0
 			for k, v in self.cart.items():
@@ -107,7 +107,9 @@ class Server(object):
                         
 			# wait for customer to tap their card 
 			# FIXME - sim
+			print("reading card")
 			card = self.card_reader.sim_read()
+			print("finish reading card")
 
 			# validate the card
 			if self.db.check_card(card):

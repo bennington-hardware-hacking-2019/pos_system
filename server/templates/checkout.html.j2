@@ -16,7 +16,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		{% for index, item in cart.data.items() %}
+		{% for index, item in cart.items() %}
 		<tr>
 			<td>{{ item.name }}</td>
 			<td>{{ item.description }}</td>
