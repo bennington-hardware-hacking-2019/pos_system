@@ -43,7 +43,6 @@ class Server(object):
 		self.sockets()
 		self.routes()
 
-
 	def sockets(self):
 		"""websocket routes definitions"""
 
@@ -53,24 +52,24 @@ class Server(object):
 			self.add_tag = True
 
 			while self.add_tag:
-					# check for a tag reading
-					# FIXME - sim
-					tag = self.tag_reader.sim_read()
+				# check for a tag reading
+				# FIXME - sim
+				tag = self.tag_reader.sim_read()
 
-					# check if the item exists in the database
-					item = self.db.get_item(tag)
-					resp = {
-							'index': item.get('index'),
-							'name': item.get('name'),
-							'tag': tag,
-							'description': item.get('description'),
-							'cost': item.get('cost')
-					}
+				# check if the item exists in the database
+				item = self.db.get_item(tag)
+				resp = {
+						'index': item.get('index'),
+						'name': item.get('name'),
+						'tag': tag,
+						'description': item.get('description'),
+						'cost': item.get('cost')
+				}
 
-					print("adding item to the cart:", resp)
+				print("adding item to the cart:", resp)
 
-					# send a response back to the ui client on `add_to_cart_response` channel
-					emit('cart_response', resp)
+				# send a response back to the ui client on `add_to_cart_response` channel
+				emit('cart_response', resp)
 
 		@self.socketio.on('cart_request')
 		def cart_request(payload):
