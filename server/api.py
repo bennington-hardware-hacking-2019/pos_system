@@ -103,10 +103,9 @@ class Server(object):
 			# total is the total value of all items in the cart
 			total = 0
 			for k, v in self.cart.items():
-					# get rid of prefix $ and convert back to float
-					total += float(v.get("cost")[1:])
-					tags.append(v.get("tag"))
-
+				# get rid of prefix $ and convert back to float
+				total += float(v.get("cost")[1:])
+				tags.append(v.get("tag"))
 
 			# wait for customer to tap their card
 			# FIXME - sim
