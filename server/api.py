@@ -21,7 +21,7 @@ class Server(object):
 		self.app.secret_key = 'yagabeatsTHO'
 		self.socketio = SocketIO(self.app, async_mode='eventlet')
 		self.cart = {}
-		self.checkout = False
+		self.add_tag = False
 		self.tag_reader = tag_reader.PN532()
 		self.card_reader = card_reader.Wiegand()
 		self.db = db.DB()
@@ -49,10 +49,10 @@ class Server(object):
 
 		def validate_tag():
 			"""keep reading for nfc tag item, validate, send it back to the ui"""
-			# set checkout to True to keep reading from tag
-			self.checkout = True
+			# set add_tag to True to keep reading from tag
+			self.add_tag = True
 
-			while self.checkout:
+			while self.add_tag:
 					# check for a tag reading
 					# FIXME - sim
 					tag = self.tag_reader.sim_read()
@@ -79,7 +79,8 @@ class Server(object):
 
 		@self.socketio.on('checkout_request')
 		def checkout_request(payload):
-
+			# set add_tag to False to stop the loop
+			self.add_tag = False
 
 			# save the cart
 			self.cart = payload
@@ -108,7 +109,7 @@ class Server(object):
 			# 		tags.append(v.get("tag"))
 
 			# # set checkout to False to stop the loop
-			# self.checkout = False
+			# self.add_tag = False
 
 			# checkout_info = {
 			# 		"msg": "total is " + str(total)[:5] + " for " + items
