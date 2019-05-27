@@ -1,3 +1,4 @@
+//hello
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 
 // get cart element
@@ -18,7 +19,7 @@ socket.emit('cart_request', {msg: 'cart_request'});
 // receive data on `cart_response` channel
 socket.on('cart_response', function(item) {
 		if (tutorial) {
-			$('#replace').remove();
+			$('#tutorial').remove();
 			tutorial = false;
 		}
 		// update to the ui
@@ -31,9 +32,14 @@ socket.on('cart_response', function(item) {
 		)
 
 		// allow selecting
-		$("#"+item.index).on('click touch', function() {
-			$(this).toggleClass(".remove");
-		});
+		// $("#"+item.index).on('click touch', function() {
+		// 	$(this).toggleClass("remove");
+		// });
+        // allow selecting
+        $("#"+item.index+"").on('click touch', function() {
+            $(this).toggleClass("remove");
+        });
+
 
 		// add to cart items dictionary
 		cart[item.index] = item
@@ -52,7 +58,7 @@ function remove() {
 var index = 1;
 function sim_add() {
 	if (tutorial) {
-		$('#replace').remove();
+		$('#tutorial').remove();
 		tutorial = false;
 	}
 
@@ -77,13 +83,6 @@ function sim_add() {
 }
 // send data over `server request` channel
 function checkout() {
-		socket.emit('checkout_request', {data: checkout_payload});
+	socket.emit('checkout_request', {data: cart});
+	window.location.href = 'http://' + document.domain + ':' + location.port + "/checkout";
 }
-
-// receive data on `pay_response` channel
-socket.on('pay_response', function(payload) {
-		// FIXME ui this stuff
-		$checkout.append('<br>');
-		$checkout.append('<div class="ui brown">' + payload.msg + '</div>');
-		console.log(payload);
-});

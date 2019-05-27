@@ -8,7 +8,7 @@
 {% block footer %}
 	{{- button("cancel", url="/") }}
 	{{- button("remove", url="javascript:remove()", title="Remove Selected Items", color="brown") }}
-	{{- button("pay", url="/checkout", title="Checkout", color="blue") }}
+	{{- button("pay", url="javascript:checkout()", title="Checkout", color="blue") }}
 {% endblock %}
 {% block script %}
 <script src="{{ url_for('static', filename='cart.js') }}"></script>

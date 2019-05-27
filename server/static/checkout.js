@@ -1,5 +1,7 @@
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 
+// on checkout_response -> update ui
+
 // get cart element by id
 var $cart = $('#cart');
 

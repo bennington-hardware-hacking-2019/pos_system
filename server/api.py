@@ -20,6 +20,7 @@ class Server(object):
 		self.app = Flask(__name__)
 		self.app.secret_key = 'yagabeatsTHO'
 		self.socketio = SocketIO(self.app, async_mode='eventlet')
+		self.cart = {}
 		self.checkout = False
 		self.tag_reader = tag_reader.PN532()
 		self.card_reader = card_reader.Wiegand()
@@ -42,100 +43,122 @@ class Server(object):
 		self.sockets()
 		self.routes()
 
-	def validate_tag(self):
-				"""keep reading for nfc tag item, validate, send it back to the ui"""
-				# set checkout to True to keep reading from tag
-				self.checkout = True
-
-				while self.checkout:
-						# check for a tag reading
-						tag = self.tag_reader.sim_read()
-
-						# check if the item exists in the database
-						item = self.db.get_item(tag)
-						resp = {
-								'name': item.get('name'),
-								'tag': tag,
-								'description': item.get('description'),
-								'cost': item.get('cost')
-						}
-
-						print("adding item to the cart:", resp)
-
-						# send a response back to the ui client on `add_to_cart_response` channel
-						emit('cart_response', resp)
 
 	def sockets(self):
 		"""websocket routes definitions"""
 
+		def validate_tag():
+			"""keep reading for nfc tag item, validate, send it back to the ui"""
+			# set checkout to True to keep reading from tag
+			self.checkout = True
+
+			while self.checkout:
+					# check for a tag reading
+					# FIXME - sim
+					tag = self.tag_reader.sim_read()
+
+					# check if the item exists in the database
+					item = self.db.get_item(tag)
+					resp = {
+							'index': item.get('index'),
+							'name': item.get('name'),
+							'tag': tag,
+							'description': item.get('description'),
+							'cost': item.get('cost')
+					}
+
+					print("adding item to the cart:", resp)
+
+					# send a response back to the ui client on `add_to_cart_response` channel
+					emit('cart_response', resp)
+
+
 		@self.socketio.on('cart_request')
 		def cart_request(payload):
 			print(payload)
-			self.socketio.start_background_task(self.validate_tag())
+			self.socketio.start_background_task(validate_tag())
 
 		@self.socketio.on('checkout_request')
 		def checkout_request(payload):
-			# payload is sent by add_to_card_request.
-			print(payload)
+			
+			# save the cart
+			self.cart = payload
 
-			tags = []
-			cart = ""
-			total = 0
-			for k, v in payload.get("data").items():
-					cart += k + " "
-					# get rid of prefix $ and convert back to float
-					total += float(v.get("cost")[1:])
-					tags.append(v.get("tag"))
+			# card_reader.read()
 
-			# set checkout to False to stop the loop
-			self.checkout = False
+			# get buyer
 
-			checkout_info = {
-					"msg": "total is " + str(total)[:5] + " for " + cart
-			}
+			# send checkout_response
 
-			# send a checkout info
-			emit('checkout_response', checkout_info)
+			# make sale
 
-			# ask the customer to tap the bennington card against the reader
-			tap_card_info = {
-				"msg": "tap your bennington card to finish checking out"
-			}
+			# FIXME when we make a sale empty the cart
 
-			sleep(1)
-			emit('checkout_response', tap_card_info)
+			
+			# # payload is sent by cart_request.
+			# print(payload)
 
-			card = self.card_reader.sim_read()
+			# tags = []
+			# items = ""
+			# total = 0
+			# for k, v in payload.get("data").items():
+			# 		items += k + " "
+			# 		# get rid of prefix $ and convert back to float
+			# 		total += float(v.get("cost")[1:])
+			# 		tags.append(v.get("tag"))
 
-			# validate the card
-			if self.db.check_card(card):
-				# collect all the items
-				items = self.db.get_items(tags)
+			# # set checkout to False to stop the loop
+			# self.checkout = False
 
-				# make sale
-				self.db.make_sale(card, tags)
+			# checkout_info = {
+			# 		"msg": "total is " + str(total)[:5] + " for " + items
+			# }
 
-				# send invoice to the customer
-				card_info = self.db.get_buyer(card)
-				name = card_info.get("name")
-				email = card_info.get("email")
+			# # send a checkout info
+			# emit('checkout_response', checkout_info)
 
-				charge_info = {
-						"msg": "charging " + name + " (" + email + ")"
-				}
-				emit('checkout_response', charge_info)
+			# # ask the customer to tap the bennington card against the reader
+			# tap_card_info = {
+			# 	"msg": "tap your bennington card to finish checking out"
+			# }
 
-				# FIXME - payment processing is not working yet. it might be because how we
-				# handle threading at the moment. need to look into this more.
-				# charge_id = self.payment_processor.send_invoice(name, email, items)
+			# sleep(1)
+			# emit('checkout_response', tap_card_info)
 
-				# # check payment status
-				# if self.payment_processor.is_paid(charge_id):
-				#		 pay_info = {
-				#				 "msg": name + " has paid"
-				#		 }
+			# # FIXME - sim
+			# card = self.card_reader.sim_read()
 
-				#		 emit('checkout_response', pay_info)
+			# # validate the card
+			# if self.db.check_card(card):
+			# 	# collect all the items
+			# 	items = self.db.get_items(tags)
+
+			# 	# make sale
+			# 	self.db.make_sale(card, tags)
+
+			# 	# send invoice to the customer
+			# 	card_info = self.db.get_buyer(card)
+			# 	name = card_info.get("name")
+			# 	email = card_info.get("email")
+
+			# 	charge_info = {
+			# 			"msg": "charging " + name + " (" + email + ")"
+			# 	}
+			# 	emit('checkout_response', charge_info)
+
+			# FIXME - payment processing is not working yet. it might be because how we
+			# handle threading at the moment. need to look into this more.
+			# charge_id = self.payment_processor.send_invoice(name, email, items)
+
+			# # check payment status
+			# if self.payment_processor.is_paid(charge_id):
+			#		 pay_info = {
+			#				 "msg": name + " has paid"
+			#		 }
+
+			#		 emit('checkout_response', pay_info)
+
+
 
 	def routes(self):
 		""" server routes """
@@ -152,7 +175,7 @@ class Server(object):
 
 		@self.app.route('/checkout')
 		def checkout():
-			return render_template("checkout.html.j2")
+			return render_template("checkout.html.j2", cart=self.cart)
 
 		@self.app.route('/help')
 		def help():
