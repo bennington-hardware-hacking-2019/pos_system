@@ -94,7 +94,6 @@ class Server(object):
 			self.add_tag = False
 
 			# save the cart
-			# FIXME when we make a sale empty the cart
 			self.cart = payload.get("data")
 			print("===> cart:", self.cart)
 
@@ -129,14 +128,17 @@ class Server(object):
 				name = card_info.get("name")
 				email = card_info.get("email")
 
-				# TODO - frontend could ultilize payment_info as follows:
+				# TODO - frontend could utilize payment_info as follows:
+				# - display `total` amount of values in the cart
 				# - show `msg` and ask for customer's confirmation
 				# - send `card` and `tags` data to `/receipt` endpoint to make the sale 
 				payment_info = {
 					"card": card,
 					"tags": tags,
+					"total": total,
 					"msg": "a payment link will be sent to " + name + " (" + email + ")"
 				}
+
 				print(payment_info)
 				# sleep for 5 seconds so that the websocket client is ready to listen again,
 				# since it takes sometimes to load into a different page
