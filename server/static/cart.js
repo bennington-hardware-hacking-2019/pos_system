@@ -87,19 +87,5 @@ function sim_add() {
 // send data over `server request` channel
 function checkout() {
 	socket.emit('checkout_request', {data: cart});
-	console.log("boop")
-	var locket = io.connect("http://localhost:5000", {resource: '/socket.io', 'force new connection': true});
-	// connect to the websocket and send to console
-	locket.on('connect', function() {
-		console.log('weblocket connected!');
-		console.log(locket.id);
-	});
-
-	// receive data on `checkout_response` channel
-	locket.on('checkout_response', function(payload) {
-			// FIXME ui this stuff
-			console.log("hello")
-			console.log(payload);
-	});
-	// window.location.href = 'http://' + document.domain + ':' + location.port + "/checkout";
+	window.location.href = 'http://' + document.domain + ':' + location.port + "/checkout";
 }
