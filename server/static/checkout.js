@@ -11,6 +11,6 @@ socket.on('connect', function() {
 // receive data on `checkout_response` channel
 socket.on('checkout_response', function(payload) {
 		// FIXME ui this stuff
-		console.log("hello")
 		console.log(payload);
+		$checkout.append("<h2 class=\"ui\">" + payload["msg"] + "</h2>")
 });
