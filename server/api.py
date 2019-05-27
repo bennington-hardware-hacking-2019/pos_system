@@ -42,10 +42,10 @@ class Server(object):
 
 		# start serving all endpoints
 		self.sockets()
-		self.routes()
+		self.https()
 
 	def sockets(self):
-		"""websocket routes definitions"""
+		"""websocket routes"""
 
 		def validate_tag():
 			"""keep reading for nfc tag item, validate, send it back to the ui"""
@@ -98,8 +98,10 @@ class Server(object):
 			self.cart = payload.get("data")
 			print("===> cart:", self.cart)
 
-			# collect all the tags of items in the cart
+			# tags is a list of tag reading values added in the cart
 			tags = []
+
+			# total is the total value of all items in the cart
 			total = 0
 			for k, v in self.cart.items():
 				# get rid of prefix $ and convert back to float
@@ -110,7 +112,7 @@ class Server(object):
 			# FIXME - sim
 			print("reading card")
 			card = self.card_reader.sim_read()
-			print("finish reading card: ",card)
+			print("finish reading card: ", card)
 
 			# validate the card
 			if self.db.check_card(card):
@@ -126,10 +128,17 @@ class Server(object):
 				name = card_info.get("name")
 				email = card_info.get("email")
 
+				# TODO - frontend could ultilize payment_info as follows:
+				# - show `msg` and ask for customer's confirmation
+				# - send `card` and `tags` data to `/receipt` endpoint to make the sale 
 				payment_info = {
+					"card": card,
+					"tags": tags,
 					"msg": "a payment link will be sent to " + name + " (" + email + ")"
 				}
 				print(payment_info)
+				# sleep for 5 seconds so that the websocket client is ready to listen again,
+				# since it takes sometimes to load into a different page
 				time.sleep(5);
 				self.socketio.emit('checkout_response', payment_info, namespace='/checkout')
 
@@ -152,16 +161,18 @@ class Server(object):
 			session['added_tag'] = tag
 			self.socketio.of("/tag").emit('admin_tag_add_response', True)
 
-	def routes(self):
-		""" server routes """
+	def https(self):
+		"""http routes"""
+
+		# ----------- #
+		# USER ROUTES #
+		# ----------- #
 
 		@self.app.route('/')
 		def index():
 			self.cart = {}
 			return render_template("index.html.j2")
 
-		# FIXME websocket integration
-		# """http/websocket routes definitions"""
 		@self.app.route('/cart')
 		def cart():
 			return render_template("cart.html.j2", cart=self.cart)
@@ -178,17 +189,19 @@ class Server(object):
 		def about():
 			return render_template('about.html.j2')
 
+		# ------------ #
 		# ADMIN ROUTES #
+		# ------------ #
 
 		@self.app.route('/login', methods=['GET', 'POST'])
 		def login():
 			if 'admin' in session:
 				return redirect(url_for('items'))
 			elif request.method == 'POST':
-				# long term - postgres from the card_reader
+				# TODO (long term) - postgres from the card_reader
 				# temporary - use a pin
 				pin = request.form['pin']
-				# long term - Hoanh put card_reader via websocket here
+				# TODO (long term) - put card_reader via websocket here
 				# if pin/card verified
 				if pin is not None and pin == "12345":
 					session['admin'] = True
@@ -284,5 +297,4 @@ class Server(object):
 				return redirect(url_for('login'))
 
 	def start(self):
-		# self.app.run(debug=True)
 		self.socketio.run(self.app, debug=True)
