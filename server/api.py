@@ -70,7 +70,7 @@ class Server(object):
 					print("adding item to the cart:", resp)
 
 					# send a response back to the ui client on `add_to_cart_response` channel
-					self.socketio.of("/cart").emit('cart_response', resp)
+					self.socketio.emit('cart_response', resp, namespace='/cart')
 				except Exception as e:
 					# if a reading fails, we can't really do anything other than passing
 					# this and letting the customer tap the card again
@@ -80,7 +80,7 @@ class Server(object):
 				finally:
 					pass
 
-		@self.socketio.on('cart_request')
+		@self.socketio.on('cart_request', namespace='/cart')
 		def cart_request(payload):
 			print(payload)
 			# for item in self.cart.items():
@@ -88,7 +88,7 @@ class Server(object):
 			# 	self.socketio.emit("cart_response", item)
 			self.socketio.start_background_task(validate_tag())
 
-		@self.socketio.on('checkout_request')
+		@self.socketio.on('checkout_request', namespace='/cart')
 		def checkout_request(payload):
 			# set add_tag to False to stop the loop
 			self.add_tag = False
@@ -131,7 +131,7 @@ class Server(object):
 						"msg": "a payment link will be sent to " + name + " (" + email + ")"
 				}
 				print(payment_info)
-				self.socketio.of("/checkout").emit('checkout_response', payment_info)
+				self.socketio.emit('checkout_response', payment_info, namespace='/checkout')
 
 			# FIXME - payment processing is not working yet. it might be because how we
 			# handle threading at the moment. need to look into this more.
