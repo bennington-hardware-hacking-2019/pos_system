@@ -68,11 +68,12 @@ class Server(object):
 						'description': item.get('description'),
 						'cost': item.get('cost')
 					}
-
-					print("adding item to the cart:", resp)
-
-					# send a response back to the ui client on `add_to_cart_response` channel
+					# send a response back to the ui client on `cart_response` channel
 					self.socketio.emit('cart_response', resp, namespace='/cart')
+					if item in self.cart:
+						print("adding item to the cart:", resp)
+					else:
+						print("duplicate item not added", resp)
 				except Exception as e:
 					# if a reading fails, we can't really do anything other than passing
 					# this and letting the customer tap the card again
