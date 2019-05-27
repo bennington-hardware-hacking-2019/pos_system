@@ -158,7 +158,7 @@ class Server(object):
 		# """http/websocket routes definitions"""
 		@self.app.route('/cart')
 		def cart():
-			return render_template("cart.html.j2")
+			return render_template("cart.html.j2", cart=self.cart)
 
 		@self.app.route('/checkout')
 		def checkout():

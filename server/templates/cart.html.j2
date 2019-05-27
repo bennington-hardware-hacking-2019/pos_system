@@ -3,7 +3,17 @@
 {% set size = '-s' %}
 {% block main %}
 <h2 id="tutorial">Tap <strong>TAPA tags</strong> on the <em>tag_reader</em> to add items to your cart</h2>
-<section id="cart"></section>
+<section id="cart">
+{% if data in cart %}
+{% for index, item in cart.data.items() %}
+	<div class="item" id="{{ item.index }}">
+	<h2>{{ item.name }}</h2>
+	<p>{{ item.description }}</p>
+	<h3 class="ui">{{ item.cost }}</h3>
+	</div>
+{% endfor %}
+{% endif %}
+</section>
 {% endblock %}
 {% block footer %}
 	{{- button("cancel", url="/") }}
