@@ -131,6 +131,8 @@ class Server(object):
 					"msg": "a payment link will be sent to " + name + " (" + email + ")"
 				}
 				print(payment_info)
+				# sleep for 5 seconds so that the websocket client is ready to listen again,
+				# since it takes sometimes to load into a different page
 				time.sleep(5);
 				self.socketio.emit('checkout_response', payment_info, namespace='/checkout')
 
