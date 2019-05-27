@@ -1,4 +1,4 @@
-var socket = io("/cart");
+var socket = io(":" + location.port + "/cart");
 
 // get cart element
 var $cart = $('#cart');

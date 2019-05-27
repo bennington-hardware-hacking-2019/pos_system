@@ -1,4 +1,4 @@
-var socket = io("/checkout");
+var socket = io(":" + location.port + "/checkout");
 
 $checkout = $("#checkout");
 
