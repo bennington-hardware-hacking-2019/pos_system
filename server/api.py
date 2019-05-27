@@ -70,7 +70,7 @@ class Server(object):
 					print("adding item to the cart:", resp)
 
 					# send a response back to the ui client on `add_to_cart_response` channel
-					emit('cart_response', resp)
+					self.socketio.emit('cart_response', resp)
 				except Exception as e:
 					# if a reading fails, we can't really do anything other than passing
 					# this and letting the customer tap the card again
@@ -83,9 +83,9 @@ class Server(object):
 		@self.socketio.on('cart_request')
 		def cart_request(payload):
 			print(payload)
-			for item in self.cart.items():
-				print("\n",item,"\n")
-				emit("cart_response", item)
+			# for item in self.cart.items():
+			# 	print("\n",item,"\n")
+			# 	self.socketio.emit("cart_response", item)
 			self.socketio.start_background_task(validate_tag())
 
 		@self.socketio.on('checkout_request')
@@ -131,7 +131,7 @@ class Server(object):
 						"msg": "a payment link will be sent to " + name + " (" + email + ")"
 				}
 				print(payment_info)
-				print(emit('checkout_response', payment_info))
+				self.socketio.emit('checkout_response', payment_info)
 
 			# FIXME - payment processing is not working yet. it might be because how we
 			# handle threading at the moment. need to look into this more.
@@ -150,7 +150,7 @@ class Server(object):
 			self.tag_reader.sim_setup()
 			tag = self.tag_reader.sim_read()
 			session['added_tag'] = tag
-			emit('admin_tag_add_response', True)
+			self.socketio.emit('admin_tag_add_response', True)
 
 	def routes(self):
 		""" server routes """

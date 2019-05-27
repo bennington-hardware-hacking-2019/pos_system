@@ -10,7 +10,10 @@ var cart = {}
 var tutorial = true;
 
 // connect to the websocket and send to console
-socket.on('connect', function() { console.log('websocket connected!'); });
+socket.on('connect', function() {
+	console.log('websocket connected!');
+	console.log(socket.id);
+});
 
 // send data over `server request` channel
 socket.emit('cart_request', {msg: 'cart_request'});
@@ -83,6 +86,19 @@ function sim_add() {
 // send data over `server request` channel
 function checkout() {
 	socket.emit('checkout_request', {data: cart});
-	socket.close();
-	window.location.href = 'http://' + document.domain + ':' + location.port + "/checkout";
+	console.log("boop")
+	var locket = io.connect("http://localhost:5000", {resource: '/socket.io', 'force new connection': true});
+	// connect to the websocket and send to console
+	locket.on('connect', function() {
+		console.log('weblocket connected!');
+		console.log(locket.id);
+	});
+
+	// receive data on `checkout_response` channel
+	locket.on('checkout_response', function(payload) {
+			// FIXME ui this stuff
+			console.log("hello")
+			console.log(payload);
+	});
+	// window.location.href = 'http://' + document.domain + ':' + location.port + "/checkout";
 }
