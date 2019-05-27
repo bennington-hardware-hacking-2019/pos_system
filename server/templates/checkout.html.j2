@@ -1,6 +1,10 @@
 {% extends "base.html.j2" %}
 {% set socket = True %}
 {% set size = '-s' %}
+{% block head %}
+	<link rel="stylesheet" href="{{ url_for('static', filename='sortable-theme-minimal.css') }}">
+	<script src="{{ url_for('static', filename='sortable.min.js') }}"></script>
+{% endblock %}
 {%- block main %}
 <h2>Tap your <strong>Bennington Id</strong> on the <em>card_reader</em> to get a payment link</h2>
 <table data-sortable>
