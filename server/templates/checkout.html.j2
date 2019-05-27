@@ -1,10 +1,6 @@
 {% extends "base.html.j2" %}
 {% set socket = True %}
 {% set size = '-s' %}
-{% block head %}
-	<link rel="stylesheet" href="{{ url_for('static', filename='sortable-theme-minimal.css') }}">
-	<script src="{{ url_for('static', filename='sortable.min.js') }}"></script>
-{% endblock %}
 {%- block main %}
 <h2>Tap your <strong>Bennington Id</strong> on the <em>card_reader</em> to get a payment link</h2>
 <table data-sortable>
@@ -25,11 +21,12 @@
 		{% endfor %}
 	</tbody>
 </table>
+<section id="checkout"></section>
 {% endblock %}
 {% block footer %}
 	{{- button("edit", url="/cart", title="Edit Cart", color="brown") }}
 	{{- button("pay", url="/pay", title="Pay", color="blue") }}
 {% endblock %}
 {% block script %}
-<script src="{{ url_for('static', filename='socket.js') }}"></script>
+<script src="{{ url_for('static', filename='checkout.js') }}"></script>
 {% endblock %}

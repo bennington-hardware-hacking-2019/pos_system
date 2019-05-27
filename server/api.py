@@ -83,6 +83,9 @@ class Server(object):
 		@self.socketio.on('cart_request')
 		def cart_request(payload):
 			print(payload)
+			for item in self.cart.items():
+				print("\n",item,"\n")
+				emit("cart_response", item)
 			self.socketio.start_background_task(validate_tag())
 
 		@self.socketio.on('checkout_request')
@@ -108,25 +111,27 @@ class Server(object):
 			# FIXME - sim
 			print("reading card")
 			card = self.card_reader.sim_read()
-			print("finish reading card")
+			print("finish reading card: ",card)
 
 			# validate the card
 			if self.db.check_card(card):
 				# collect all the items
-				items = self.db.get_items(tags)
+				# items = self.db.get_items(tags)
 
 				# make sale
-				self.db.make_sale(card, tags)
+				# self.db.make_sale(card, tags)
 
 				# send a payment confirmation request to the customer
 				card_info = self.db.get_buyer(card)
+				print(card_info)
 				name = card_info.get("name")
 				email = card_info.get("email")
 
 				payment_info = {
 						"msg": "a payment link will be sent to " + name + " (" + email + ")"
 				}
-				emit('checkout_response', payment_info)
+				print(payment_info)
+				print(emit('checkout_response', payment_info))
 
 			# FIXME - payment processing is not working yet. it might be because how we
 			# handle threading at the moment. need to look into this more.

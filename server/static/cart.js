@@ -1,4 +1,4 @@
-var socket = io.connect('http://' + document.domain + ':' + location.port);
+var socket = io();
 
 // get cart element
 var $cart = $('#cart');
@@ -83,5 +83,6 @@ function sim_add() {
 // send data over `server request` channel
 function checkout() {
 	socket.emit('checkout_request', {data: cart});
+	socket.close();
 	window.location.href = 'http://' + document.domain + ':' + location.port + "/checkout";
 }
