@@ -24,28 +24,32 @@ socket.on('cart_response', function(item) {
 			$('#tutorial').remove();
 			tutorial = false;
 		}
-		// update to the ui
-		$cart.append(
-			"<div class=\"item\" id=\"" + item.index + "\">"
-			+ "<h2>" + item.name + "</h2>"
-			+ "<p>" + item.description + "</p>"
-			+ "<h3 class=\"ui\">" + item.cost + "</h3>" +
-			"</div>"
-		)
 
-		// allow selecting
-		// $("#"+item.index).on('click touch', function() {
-		// 	$(this).toggleClass("remove");
-		// });
-		// allow selecting
-		$("#"+item.index).on('click touch', function() {
-		    $(this).toggleClass("remove");
-		});
+		console.log(item.index)
+		console.log(cart)
+		console.log(item.index in cart)
 
+		if !(item.index in cart) {
+			// update to the ui
+			$cart.append(
+				"<div class=\"item\" id=\"" + item.index + "\">"
+				+ "<h2>" + item.name + "</h2>"
+				+ "<p>" + item.description + "</p>"
+				+ "<h3 class=\"ui\">" + item.cost + "</h3>" +
+				"</div>"
+			)
 
-		// add to cart items dictionary
-		cart[item.index] = item
-		console.log(item);
+			// allow selecting
+			$("#"+item.index).on('click touch', function() {
+			    $(this).toggleClass("remove");
+			});
+
+			// add to cart items dictionary
+			cart[item.index] = item
+			console.log(item);
+		} else {
+			console.log("duplicate item")
+		}
 });
 
 function remove() {
