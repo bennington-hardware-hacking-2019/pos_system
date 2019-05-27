@@ -4,7 +4,20 @@ var socket = io(":" + location.port + "/cart");
 var $cart = $('#cart');
 
 // cart items dictionary
-var cart = {}
+var cart = {};
+
+// if items are already in the cart
+// add them to the cart items dictionary
+$(".item").each(function() {
+	$item = $(this);
+	item = {};
+	item.index = $item.attr("id");
+	item.name = $item.children("h2").text();
+	item.description = $item.children("p").text();
+	item.cost = $item.children("h3").text();
+	cart[item.index] = item;
+	})
+
 
 // tutorial toggle
 var tutorial = true;
