@@ -37,10 +37,10 @@ socket.on('cart_response', function(item) {
 		// $("#"+item.index).on('click touch', function() {
 		// 	$(this).toggleClass("remove");
 		// });
-        // allow selecting
-        $("#"+item.index).on('click touch', function() {
-            $(this).toggleClass("remove");
-        });
+		// allow selecting
+		$("#"+item.index).on('click touch', function() {
+		    $(this).toggleClass("remove");
+		});
 
 
 		// add to cart items dictionary
@@ -56,7 +56,7 @@ function remove() {
 	});
 }
 
-// emulate adding an item
+// simulate adding an item
 var index = 1;
 function sim_add() {
 	if (tutorial) {
@@ -83,6 +83,7 @@ function sim_add() {
 	console.log(index);
 	index++;
 }
+
 // send data over `server request` channel
 function checkout() {
 	socket.emit('checkout_request', {data: cart});
