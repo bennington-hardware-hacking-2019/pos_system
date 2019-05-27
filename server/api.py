@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import time
 
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import SocketIO
@@ -55,6 +56,7 @@ class Server(object):
 				try:
 					# check for a tag reading
 					# FIXME - sim
+					print("sim_read")
 					tag = self.tag_reader.sim_read()
 
 					# check if the item exists in the database
@@ -83,9 +85,6 @@ class Server(object):
 		@self.socketio.on('cart_request', namespace='/cart')
 		def cart_request(payload):
 			print(payload)
-			# for item in self.cart.items():
-			# 	print("\n",item,"\n")
-			# 	self.socketio.emit("cart_response", item)
 			self.socketio.start_background_task(validate_tag())
 
 		@self.socketio.on('checkout_request', namespace='/cart')
@@ -158,6 +157,7 @@ class Server(object):
 
 		@self.app.route('/')
 		def index():
+			self.cart = {}
 			return render_template("index.html.j2")
 
 		# FIXME websocket integration
