@@ -9,14 +9,23 @@ var cart = {};
 // if items are already in the cart
 // add them to the cart items dictionary
 $(".item").each(function() {
+	// get each item
 	$item = $(this);
-	item = {};
-	item.index = $item.attr("id");
-	item.name = $item.children("h2").text();
-	item.description = $item.children("p").text();
-	item.cost = $item.children("h3").text();
+	// make a dict
+	item = {
+		"index": $item.attr("id"),
+		"name": $item.children("h2").text(),
+		"description": $item.children("p").text(),
+		"cost": $item.children("h3").text()
+	};
+	// add it to the cart
 	cart[item.index] = item;
-	})
+	// allow selecting
+	$("#"+item.index).on('click touch', function() {
+			$(this).toggleClass("remove");
+	});
+
+})
 
 
 // tutorial toggle
