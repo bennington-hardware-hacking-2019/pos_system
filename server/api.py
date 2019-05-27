@@ -72,7 +72,6 @@ class Server(object):
 					# send a response back to the ui client on `add_to_cart_response` channel
 					emit('cart_response', resp)
 
-
 		@self.socketio.on('cart_request')
 		def cart_request(payload):
 			print(payload)
@@ -80,7 +79,8 @@ class Server(object):
 
 		@self.socketio.on('checkout_request')
 		def checkout_request(payload):
-			
+
+
 			# save the cart
 			self.cart = payload
 
@@ -94,7 +94,7 @@ class Server(object):
 
 			# FIXME when we make a sale empty the cart
 
-			
+
 			# # payload is sent by cart_request.
 			# print(payload)
 
@@ -158,7 +158,12 @@ class Server(object):
 
 			#		 emit('checkout_response', pay_info)
 
-
+		@self.socketio.on('admin_tag_add_request')
+		def admin_tag_add_request():
+			self.tag_reader.sim_setup()
+			tag = self.tag_reader.sim_read()
+			session['added_tag'] = tag
+			emit('admin_tag_add_response', True)
 
 	def routes(self):
 		""" server routes """
@@ -236,16 +241,11 @@ class Server(object):
 		def add():
 			if 'admin' in session:
 				if request.method == 'POST':
-					#Here hoanh!
-					#tag = whaaaat
-					#dummy tag
-					#using random so we can create a lot of dummy data without error handling
-					import random
-					rand = random.randint(1,101)
-					tag = [1,0,68,0,7,4,137,16,98,101,rand]
+					tag = session['added_tag']
 					name = request.form['item']
 					desc = request.form['desc']
 					cost = request.form['cost']
+					session['added_tag'] = None
 					in_stock = 'in_stock' in request.form
 					self.db.add_item(tag, name, desc, cost, in_stock)
 					return redirect(url_for('items'))
