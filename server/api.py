@@ -53,24 +53,33 @@ class Server(object):
 			self.add_tag = True
 
 			while self.add_tag:
-					# check for a tag reading
-					# FIXME - sim
-					tag = self.tag_reader.sim_read()
+					try:
+						# check for a tag reading
+						# FIXME - sim
+						tag = self.tag_reader.sim_read()
 
-					# check if the item exists in the database
-					item = self.db.get_item(tag)
-					resp = {
-							'index': item.get('index'),
-							'name': item.get('name'),
-							'tag': tag,
-							'description': item.get('description'),
-							'cost': item.get('cost')
-					}
+						# check if the item exists in the database
+						item = self.db.get_item(tag)
+						resp = {
+								'index': item.get('index'),
+								'name': item.get('name'),
+								'tag': tag,
+								'description': item.get('description'),
+								'cost': item.get('cost')
+						}
 
-					print("adding item to the cart:", resp)
+						print("adding item to the cart:", resp)
 
-					# send a response back to the ui client on `add_to_cart_response` channel
-					emit('cart_response', resp)
+						# send a response back to the ui client on `add_to_cart_response` channel
+						emit('cart_response', resp)
+					except Exception as e:
+						# if a reading fails, we can't really do anything other than passing
+						# this and letting the customer tap the card again
+						pass
+					else:
+						pass
+					finally:
+						pass
 
 		@self.socketio.on('cart_request')
 		def cart_request(payload):
@@ -83,69 +92,40 @@ class Server(object):
 			self.add_tag = False
 
 			# save the cart
-			self.cart = payload
-
-			# card_reader.read()
-
-			# get buyer
-
-			# send checkout_response
-
-			# make sale
-
 			# FIXME when we make a sale empty the cart
+			self.cart = payload.get("data")
+			print(self.cart)
 
+                        # collect all the tags of items in the cart
+			tags = []
+			total = 0
+			for k, v in self.cart.items():
+					# get rid of prefix $ and convert back to float
+					total += float(v.get("cost")[1:])
+					tags.append(v.get("tag"))
 
-			# # payload is sent by cart_request.
-			# print(payload)
+                        
+			# wait for customer to tap their card 
+			# FIXME - sim
+			card = self.card_reader.sim_read()
 
-			# tags = []
-			# items = ""
-			# total = 0
-			# for k, v in payload.get("data").items():
-			# 		items += k + " "
-			# 		# get rid of prefix $ and convert back to float
-			# 		total += float(v.get("cost")[1:])
-			# 		tags.append(v.get("tag"))
+			# validate the card
+			if self.db.check_card(card):
+				# collect all the items
+				items = self.db.get_items(tags)
 
-			# # set checkout to False to stop the loop
-			# self.add_tag = False
+				# make sale
+				self.db.make_sale(card, tags)
 
-			# checkout_info = {
-			# 		"msg": "total is " + str(total)[:5] + " for " + items
-			# }
+				# send a payment confirmation request to the customer
+				card_info = self.db.get_buyer(card)
+				name = card_info.get("name")
+				email = card_info.get("email")
 
-			# # send a checkout info
-			# emit('checkout_response', checkout_info)
-
-			# # ask the customer to tap the bennington card against the reader
-			# tap_card_info = {
-			# 	"msg": "tap your bennington card to finish checking out"
-			# }
-
-			# sleep(1)
-			# emit('checkout_response', tap_card_info)
-
-			# # FIXME - sim
-			# card = self.card_reader.sim_read()
-
-			# # validate the card
-			# if self.db.check_card(card):
-			# 	# collect all the items
-			# 	items = self.db.get_items(tags)
-
-			# 	# make sale
-			# 	self.db.make_sale(card, tags)
-
-			# 	# send invoice to the customer
-			# 	card_info = self.db.get_buyer(card)
-			# 	name = card_info.get("name")
-			# 	email = card_info.get("email")
-
-			# 	charge_info = {
-			# 			"msg": "charging " + name + " (" + email + ")"
-			# 	}
-			# 	emit('checkout_response', charge_info)
+				payment_info = {
+						"msg": "a payment link will be sent to " + name + " (" + email + ")"
+				}
+				emit('checkout_response', payment_info)
 
 			# FIXME - payment processing is not working yet. it might be because how we
 			# handle threading at the moment. need to look into this more.

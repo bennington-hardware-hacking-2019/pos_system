@@ -308,7 +308,7 @@ class DB(object):
 			""",
 			(sale_index, tag,)
 		)
-		item_index = cur.fetchone()
+		item_index = cur.fetchone().get("index")
 		cur.execute(
 			"""
 			DELETE FROM stock

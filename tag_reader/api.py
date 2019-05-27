@@ -102,7 +102,7 @@ class PN532(object):
 
 	def sim_read(self):
 		"""FIXME - simulate reading, only used for testing purposes"""
-		time.sleep(3)
+		time.sleep(1)
 		result = [
 			[1, 0, 68, 0, 7, 4, 137, 16, 98, 101, 96],
 			[1, 0, 68, 0, 7, 4, 187, 16, 122, 101, 96],
