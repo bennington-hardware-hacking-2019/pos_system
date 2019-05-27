@@ -60,11 +60,11 @@ class Server(object):
 					# check if the item exists in the database
 					item = self.db.get_item(tag)
 					resp = {
-							'index': item.get('index'),
-							'name': item.get('name'),
-							'tag': tag,
-							'description': item.get('description'),
-							'cost': item.get('cost')
+						'index': item.get('index'),
+						'name': item.get('name'),
+						'tag': tag,
+						'description': item.get('description'),
+						'cost': item.get('cost')
 					}
 
 					print("adding item to the cart:", resp)
