@@ -43,7 +43,6 @@ class Server(object):
 		self.sockets()
 		self.routes()
 
-
 	def sockets(self):
 		"""websocket routes definitions"""
 
