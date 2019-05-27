@@ -1,4 +1,4 @@
-var socket = io();
+var socket = io("/cart");
 
 // get cart element
 var $cart = $('#cart');
