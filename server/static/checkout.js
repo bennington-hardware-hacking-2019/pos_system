@@ -1,4 +1,4 @@
-var socket = io(":" + location.port + "/cart");
+var socket = io(":" + location.port + "/checkout");
 
 $checkout = $("#checkout");
 
@@ -9,7 +9,7 @@ socket.on('connect', function() {
 });
 
 // receive data on `checkout_response` channel
-socket.on('cart_response', function(payload) {
+socket.on('checkout_response', function(payload) {
 		// FIXME ui this stuff
 		console.log("hello")
 		console.log(payload);

@@ -128,10 +128,11 @@ class Server(object):
 				email = card_info.get("email")
 
 				payment_info = {
-						"msg": "a payment link will be sent to " + name + " (" + email + ")"
+					"msg": "a payment link will be sent to " + name + " (" + email + ")"
 				}
 				print(payment_info)
-				self.socketio.emit('checkout_response', payment_info, namespace='/cart')
+				time.sleep(5);
+				self.socketio.emit('checkout_response', payment_info, namespace='/checkout')
 
 			# FIXME - payment processing is not working yet. it might be because how we
 			# handle threading at the moment. need to look into this more.
