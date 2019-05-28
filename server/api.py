@@ -174,6 +174,10 @@ class Server(object):
 		def checkout():
 			return render_template("checkout.html.j2", cart=self.cart)
 
+		@self.app.route('/receipt')
+		def receipt():
+			return render_template('receipt.html')
+
 		@self.app.route('/help')
 		def help():
 			return render_template('help.html.j2')
