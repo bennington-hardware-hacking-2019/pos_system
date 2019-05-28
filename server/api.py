@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 from flask_socketio import SocketIO
 from threading import Lock
 
@@ -130,8 +130,10 @@ class Server(object):
 				# TODO - frontend could utilize payment_info as follows:
 				# - display `total` amount of values in the cart
 				# - show `msg` and ask for customer's confirmation
-				# - send `card` and `tags` data to `/receipt` endpoint to make the sale 
+				# - send `card` and `tags` data to `/pay` endpoint to make the sale
 				payment_info = {
+					"name": name,
+					"email": email,
 					"card": card,
 					"tags": tags,
 					"total": total,
@@ -139,22 +141,11 @@ class Server(object):
 				}
 
 				print(payment_info)
+
 				# sleep for 5 seconds so that the websocket client is ready to listen again,
 				# since it takes sometimes to load into a different page
 				time.sleep(5);
 				self.socketio.emit('checkout_response', payment_info, namespace='/checkout')
-
-			# FIXME - payment processing is not working yet. it might be because how we
-			# handle threading at the moment. need to look into this more.
-			# charge_id = self.payment_processor.send_invoice(name, email, items)
-
-			# # check payment status
-			# if self.payment_processor.is_paid(charge_id):
-			#		 pay_info = {
-			#				 "msg": name + " has paid"
-			#		 }
-
-			#		 emit('checkout_response', pay_info)
 
 		@self.socketio.on('admin_tag_add_request')
 		def admin_tag_add_request():
@@ -190,6 +181,33 @@ class Server(object):
 		@self.app.route('/about')
 		def about():
 			return render_template('about.html.j2')
+
+		@self.app.route('/pay', methods=['POST'])
+		def pay():
+			payload = request.get_json()
+
+			name = payload.get("name")
+			email = payload.get("email")
+			card = payload.get("card")
+			tags = payload.get("tags")
+
+			# collect all the items
+			items = self.db.get_items(tags)
+
+			# make sale
+			self.db.make_sale(card, tags)
+
+			# FIXME - refer to #36 - stripe api raises connection error
+			# charge_id = self.payment_processor.send_invoice(name, email, items)
+
+			# check payment status
+			# resp = {"status": "pending"}
+			# if self.payment_processor.is_paid(charge_id):
+			# 	resp["status"] = "done"
+
+			# return jsonify(resp)
+
+			return jsonify({"status": "ok"})
 
 		# ------------ #
 		# ADMIN ROUTES #
