@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from RPi.GPIO import *
+# from RPi.GPIO import *
 import time
 
 from . import exceptions

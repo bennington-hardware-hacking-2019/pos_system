@@ -345,16 +345,16 @@ class DB(object):
 		create a sale of items
 		returns a sale dictionary
 		"""
-		bennington_id = int(self.get_buyer(card).get("bennington_id"))
+		card = int(self.get_buyer(card).get("card"))
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cur.execute(
 			"""
 			INSERT INTO sale (
-				bennington_id
+				card
 			) VALUES (%s)
                         RETURNING index;
 			""",
-			(bennington_id,)
+			(card,)
 		)
 		sale = cur.fetchone()
 		self.sell_items(tags, sale.get("index"))
