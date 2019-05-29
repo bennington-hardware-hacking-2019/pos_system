@@ -1,6 +1,10 @@
 /* pre-populated data */
 
 INSERT INTO "buyer" VALUES (DEFAULT, 28640, 7114, 'hoanh', 'hoanhan@bennington.edu');
+INSERT INTO "buyer" VALUES (DEFAULT, 29814, 10951, 'five', 'fivegrant@bennington.edu');
+INSERT INTO "buyer" VALUES (DEFAULT, 29270, 9005, 'matt', 'mattcollyer@bennington.edu');
+INSERT INTO "buyer" VALUES (DEFAULT, 28723, 6446, 'juul', 'julianlambert@bennington.edu');
+INSERT INTO "buyer" VALUES (DEFAULT, 29682, 9603, 'zak', 'zalkar@bennington.edu');
 
 INSERT INTO "admin" VALUES (DEFAULT, 28640, TRUE);
 
