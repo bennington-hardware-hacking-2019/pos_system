@@ -103,7 +103,7 @@ img {
 }
 .brown { color: #803434 }
 .blue { color: #9CD3E7 }
-pre, td { font-family: Inconsolata, monospace }
+pre, td { font-family: Inconsolata, monospace; }
 table {
 	margin: 1em 2em;
 }
@@ -114,15 +114,4 @@ th:nth-of-type(3),
 td:nth-of-type(3) {
 	text-align: right !important;
 }
-.item {
-	margin: .5em;
-	border-radius: .5em;
-	border: 4px solid currentcolor;
-	padding: .5em;
-	font-size: 1em;
-	background: white;
-}
-.item.remove {
-	background: #803434;
-	color: white;
-}
+
