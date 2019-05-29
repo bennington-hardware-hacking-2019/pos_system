@@ -4,6 +4,7 @@ import time
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 from flask_socketio import SocketIO
 from threading import Lock
+import os
 
 import tag_reader
 import card_reader
@@ -14,6 +15,7 @@ import payment_processor
 # https://stackoverflow.com/questions/44371041/python-socketio-and-flask-how-to-stop-a-loop-in-a-background-thread
 import eventlet
 eventlet.monkey_patch()
+
 
 class Server(object):
 	def __init__(self):
@@ -166,6 +168,18 @@ class Server(object):
 			self.cart = {}
 			return render_template("index.html.j2")
 
+		@self.app.context_processor
+		def override_url_for():
+			return dict(url_for=dated_url_for)
+
+		def dated_url_for(endpoint, **values):
+			if endpoint == 'static':
+				filename = values.get('filename', None)
+				if filename:
+					file_path = os.path.join(self.app.root_path, endpoint, filename)
+					values['q'] = int(os.stat(file_path).st_mtime)
+			return url_for(endpoint, **values)
+
 		@self.app.route('/cart')
 		def cart():
 			return render_template("cart.html.j2", cart=self.cart)
@@ -173,10 +187,6 @@ class Server(object):
 		@self.app.route('/checkout')
 		def checkout():
 			return render_template("checkout.html.j2", cart=self.cart)
-
-		@self.app.route('/receipt')
-		def receipt():
-			return render_template('receipt.html')
 
 		@self.app.route('/help')
 		def help():
