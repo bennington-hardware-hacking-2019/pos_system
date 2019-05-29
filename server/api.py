@@ -28,8 +28,8 @@ db = db.DB()
 payment_processor = payment_processor.PaymentProcessor()
 
 # FIXME - sim
-tag_reader.sim_setup()
-card_reader.sim_setup()
+tag_reader.setup()
+card_reader.setup()
 db.setup()
 payment_processor.setup()
 
@@ -69,7 +69,7 @@ def checkout_request(payload):
 	# wait for customer to tap their card
 	# FIXME - sim
 	print("reading card")
-	card = card_reader.sim_read()
+	card = card_reader.read()
 	print("finish reading card:", card)
 
 	# validate the card
@@ -105,14 +105,14 @@ def checkout_request(payload):
 @socketio.on('tag_request', namespace='/tag')
 def tag_request():
 	# FIMXE - sim
-	tag = tag_reader.sim_read()
+	tag = tag_reader.read()
 	session['tag'] = tag
 	socketio.emit('tag_response', True, namespace='/tag')
 
 @socketio.on('card_request', namespace='/card')
 def tag_request():
 	# FIMXE - sim
-	card = card_reader.sim_read()
+	card = card_reader.read()
 	session['card'] = card
 	socketio.emit('card_response', True, namespace='/card')
 
@@ -316,7 +316,7 @@ def validate_tag():
 		try:
 			# check for a tag reading
 			# FIXME - sim
-			tag = tag_reader.sim_read()
+			tag = tag_reader.read()
 
 			# check if the item exists in the database
 			item = db.get_item(tag)
