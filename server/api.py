@@ -74,15 +74,18 @@ def checkout_request(payload):
 
 	# validate the card
 	if db.check_card(card):
-		# send a payment confirmation request to the customer
 		card_info = db.get_buyer(card)
 		name = card_info.get("name")
 		email = card_info.get("email")
 
-		# TODO - frontend could utilize payment_info as follows:
-		# - display `total` amount of values in the cart
-		# - show `msg` and ask for customer's confirmation
-		# - send `card` and `tags` data to `/pay` endpoint to make the sale
+		# collect all the items
+		items = db.get_items(tags)
+
+		# make sale
+		db.make_sale(card, tags)
+
+		# send a confirmation request to the customer
+		# TODO - refer to #36. in short, frontend will make stripe payment
 		payment_info = {
 			"name": name,
 			"email": email,
