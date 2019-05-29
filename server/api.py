@@ -341,6 +341,7 @@ def validate_tag():
 			pass
 
 def validate_card():
+	print("\n\nvalidating card")
 	return card_reader.read()
 
 def start():

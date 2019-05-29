@@ -32,6 +32,7 @@ class Wiegand(object):
 		"""return the card reading value as an integer format"""
 		capture = ''
 		while True:
+			print("reading card")
 			if input(self.data0) == LOW:
 				capture += '0'
 				time.sleep(rest)
