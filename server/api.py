@@ -102,13 +102,19 @@ def checkout_request(payload):
 		time.sleep(5);
 		socketio.emit('checkout_response', payment_info, namespace='/checkout')
 
-@socketio.on('admin_tag_add_request')
-def admin_tag_add_request():
+@socketio.on('tag_request', namespace='/tag')
+def tag_request():
 	# FIMXE - sim
-	tag_reader.sim_setup()
 	tag = tag_reader.sim_read()
-	session['added_tag'] = tag
-	socketio.of("/tag").emit('admin_tag_add_response', True)
+	session['tag'] = tag
+	socketio.emit('tag_response', True, namespace='/tag')
+
+@socketio.on('card_request', namespace='/card')
+def tag_request():
+	# FIMXE - sim
+	card = card_reader.sim_read()
+	session['card'] = card
+	socketio.emit('card_response', True, namespace='/card')
 
 """
 	http routes
@@ -221,11 +227,14 @@ def sold():
 def add():
 	if 'admin' in session:
 		if request.method == 'POST':
-			tag = session['added_tag']
+			if 'tag' in session:
+				tag = session['tag']
+				session['tag'] = None
+			else:
+				tag = None
 			name = request.form['item']
 			desc = request.form['desc']
 			cost = request.form['cost']
-			session['added_tag'] = None
 			in_stock = 'in_stock' in request.form
 			db.add_item(tag, name, desc, cost, in_stock)
 			return redirect(url_for('items'))
@@ -272,6 +281,24 @@ def stock(index):
 		index = str(int(index))
 		db.stock_item(index)
 		return redirect(url_for('items'))
+	else:
+		return redirect(url_for('login'))
+
+@app.route('/buyer', methods=["GET", "POST"])
+def buyer():
+	if 'admin' in session:
+		if request.method == 'POST':
+			if 'card' in session:
+				card = session['card']
+				session['card'] = None
+			else:
+				card = None
+			name = request.form['name']
+			email = request.form['email']
+			db.add_buyer(name, email, card)
+			return redirect(url_for('items'))
+		elif request.method == 'GET':
+			return render_template('buyer.html.j2')
 	else:
 		return redirect(url_for('login'))
 

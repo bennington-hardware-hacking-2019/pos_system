@@ -1,12 +1,10 @@
 /* pre-populated data */
 
-INSERT INTO "buyer" VALUES (DEFAULT, 28640, 7114, 'hoanh', 'hoanhan@bennington.edu');
-INSERT INTO "buyer" VALUES (DEFAULT, 29814, 10951, 'five', 'fivegrant@bennington.edu');
-INSERT INTO "buyer" VALUES (DEFAULT, 29270, 9005, 'matt', 'mattcollyer@bennington.edu');
-INSERT INTO "buyer" VALUES (DEFAULT, 28723, 6446, 'juul', 'julianlambert@bennington.edu');
-INSERT INTO "buyer" VALUES (DEFAULT, 29682, 9603, 'zak', 'zalkar@bennington.edu');
-
-INSERT INTO "admin" VALUES (DEFAULT, 28640, TRUE);
+INSERT INTO "buyer" VALUES (DEFAULT, 'hoanh', 'hoanhan@bennington.edu', 7114);
+INSERT INTO "buyer" VALUES (DEFAULT, 'five', 'fivegrant@bennington.edu', 10951);
+INSERT INTO "buyer" VALUES (DEFAULT, 'matt', 'mattcollyer@bennington.edu', 9005);
+INSERT INTO "buyer" VALUES (DEFAULT, 'juul', 'julianlambert@bennington.edu', 6446);
+INSERT INTO "buyer" VALUES (DEFAULT, 'zak', 'zalkar@bennington.edu', 9603);
 
 INSERT INTO "item" VALUES (DEFAULT, '{1,0,68,0,7,4,12,218,106,101,96}', 'Sharpie', 'black',  7.11, DEFAULT, NULL);
 INSERT INTO "item" VALUES (DEFAULT, '{1,0,68,0,7,4,29,208,106,101,96}', 'Drone', 'it a drone',  9.22, DEFAULT, NULL);
@@ -23,3 +21,7 @@ INSERT INTO "stock" VALUES (DEFAULT, 2);
 INSERT INTO "stock" VALUES (DEFAULT, 3);
 INSERT INTO "stock" VALUES (DEFAULT, 4);
 INSERT INTO "stock" VALUES (DEFAULT, 5);
+INSERT INTO "stock" VALUES (DEFAULT, 6);
+INSERT INTO "stock" VALUES (DEFAULT, 7);
+INSERT INTO "stock" VALUES (DEFAULT, 8);
+INSERT INTO "stock" VALUES (DEFAULT, 9);
