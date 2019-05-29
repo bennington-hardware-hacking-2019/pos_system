@@ -3,6 +3,7 @@
 {% set size = '-s' %}
 {% block main %}
 <h2 id="tutorial">Tap <strong>TAPA tags</strong> on the <em>tag_reader</em> to add items to your cart</h2>
+
 <section id="cart">
 {% if cart is defined %}
 {% for index, item in cart.items() %}
@@ -14,12 +15,17 @@
 {% endfor %}
 {% endif %}
 </section>
+
 {% endblock %}
+
 {% block footer %}
 	{{- button("cancel", url="/") }}
 	{{- button("remove", url="javascript:remove()", title="Remove Selected Items", color="brown") }}
 	{{- button("pay", url="javascript:checkout()", title="Checkout", color="blue") }}
 {% endblock %}
+
 {% block script %}
 <script src="{{ url_for('static', filename='cart.js') }}"></script>
 {% endblock %}
+
+
