@@ -25,11 +25,14 @@
 		{% endfor %}
 	</tbody>
 </table>
-<section id="checkout"></section>
+<section id="checkout">
+    <form id="checkout-form" action="/pay" method="POST">
+    </form>
+</section>
 {% endblock %}
 {% block footer %}
 	{{- button("edit", url="/cart", title="Edit Cart", color="brown") }}
-	{{- button("pay", url="/receipt", title="Pay", color="blue") }}
+	{{- button("pay", url="/pay", title="Pay", color="blue") }}
 {% endblock %}
 {% block script %}
 <script src="{{ url_for('static', filename='checkout.js') }}"></script>

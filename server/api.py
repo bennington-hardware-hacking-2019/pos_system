@@ -196,32 +196,40 @@ class Server(object):
 		def about():
 			return render_template('about.html.j2')
 
-		@self.app.route('/pay', methods=['POST'])
+		@self.app.route('/pay', methods=['GET', 'POST'])
 		def pay():
-			payload = request.get_json()
+			if request.method == 'POST':
+				name = request.form['name']
 
-			name = payload.get("name")
-			email = payload.get("email")
-			card = payload.get("card")
-			tags = payload.get("tags")
+				return render_template('pay.html.j2')
 
-			# collect all the items
-			items = self.db.get_items(tags)
 
-			# make sale
-			self.db.make_sale(card, tags)
+			# payload = request.get_json()
+			#
+			# name = payload.get("name")
+			# email = payload.get("email")
+			# card = payload.get("card")
+			# tags = payload.get("tags")
+			#
+			# # collect all the items
+			# items = self.db.get_items(tags)
+			#
+			# # make sale
+			# self.db.make_sale(card, tags)
+			#
+			# # FIXME - refer to #36 - stripe api raises connection error
+			# # charge_id = self.payment_processor.send_invoice(name, email, items)
+			#
+			# # check payment status
+			# # resp = {"status": "pending"}
+			# # if self.payment_processor.is_paid(charge_id):
+			# # 	resp["status"] = "done"
+			#
+			# # return jsonify(resp)
 
-			# FIXME - refer to #36 - stripe api raises connection error
-			# charge_id = self.payment_processor.send_invoice(name, email, items)
+			# return jsonify({"status": "ok"})
 
-			# check payment status
-			# resp = {"status": "pending"}
-			# if self.payment_processor.is_paid(charge_id):
-			# 	resp["status"] = "done"
 
-			# return jsonify(resp)
-
-			return jsonify({"status": "ok"})
 
 		# ------------ #
 		# ADMIN ROUTES #

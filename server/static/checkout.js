@@ -1,6 +1,6 @@
 var socket = io(":" + location.port + "/checkout");
 
-$checkout = $("#checkout");
+$checkout = $("#checkout-form");
 
 // connect to the websocket and send to console
 socket.on('connect', function() {
@@ -12,5 +12,22 @@ socket.on('connect', function() {
 socket.on('checkout_response', function(payload) {
 		// FIXME ui this stuff
 		console.log(payload);
-		$checkout.append("<h2 class=\"ui\">" + payload["msg"] + "</h2>")
+		$checkout.append("<h4>Please, confirm the information below:</h4>")
+		$checkout.append("<input type=\"text\" name=\"name\" value=" + payload["name"] + " disabled>")
+		$checkout.append("<input type=\"email\" name=\"email\" value=" + payload["email"] + " disabled>")
+		$checkout.append("<input type=\"text\" name=\"card\" value=" + payload["card"] + " disabled>")
+		$checkout.append("<input type=\"text\" name=\"tags\" value=" + payload["tags"] + " disabled>")
+		$checkout.append("<br>")
+		$checkout.append("<button type=\"submit\">Start</button>")
 });
+
+
+
+
+
+
+
+
+
+
+
