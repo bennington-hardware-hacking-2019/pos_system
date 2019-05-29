@@ -16,13 +16,13 @@ CREATE TABLE IF NOT EXISTS admin (
 
 CREATE TABLE IF NOT EXISTS item (
 	index SERIAL UNIQUE NOT NULL,
-	tag INT[] UNIQUE NOT NULL,
+	tag INT[] UNIQUE,
 	name VARCHAR(255) NOT NULL,
 	description VARCHAR(255) NULL,
 	cost MONEY NOT NULL,
 	date_added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	sale_index INT,
-	PRIMARY KEY (tag));
+	PRIMARY KEY (index));
 
 -- What if an tag is reused? Or perhaps an item is returned?
 

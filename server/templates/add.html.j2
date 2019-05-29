@@ -1,4 +1,5 @@
 {% extends "base.html.j2" %}
+{% set socket = True %}
 {% block main %}
 <form method="post">
 	<label for="item">Item name</label>
@@ -7,11 +8,14 @@
 	<input id="desc" name="desc" value="" type="text">
 	<label for="cost">Cost</label>
 	<input id="cost" name="cost" value="" type="number" step="0.01" min="0.00" max="1000.00">
-	<label for="tag">Tag<button id="tag" onclick="tag()">Add</button></label>
 	<label for="in_stock"><input id="in_stock" name="in_stock" type="checkbox" checked> in stock</label>
 	<input name="add" value="Add item" type="submit">
+	<label for="tag"><a id="tag" href="javascript:tag();">Add Tag</a></label>
 </form>
 {% endblock %}
 {% block footer %}
 	{{- button("cancel", url="/items") }}
+{% endblock %}
+{% block script %}
+	<script src="{{url_for('static',filename='add.js')}}"></script>
 {% endblock %}
