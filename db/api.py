@@ -92,6 +92,26 @@ class DB(object):
 		cur.close()
 		return buyer
 
+	def add_buyer(self, name, email, card):
+		"""
+		add buyer name, email and card
+		returns True
+		"""
+		# use psycopg extras to return a fancy dictionary for each row
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		# get the buyer
+		cur.execute(
+			"""
+			INSERT INTO buyer
+			(name, email, card)
+			VALUES (%s, %s, %s)
+			""",
+			(name, email, card)
+		)
+		self.conn.commit()
+		cur.close()
+		return True
+
 	def get_items(self, tags):
 		"""
 		get items from tags

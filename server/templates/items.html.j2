@@ -4,6 +4,10 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='sortable-theme-minimal.css') }}">
 	<script src="{{ url_for('static', filename='sortable.min.js') }}"></script>
 {% endblock %}
+{%- block header %}
+	<img class="logo" src="{{ url_for('static', filename='images/logo{0}.png'.format(size|default('-m'))) }}" alt="TAPA Logo" title="TAPA — Thrift and Public Apparel">
+	{{- button("add", url="/buyer", title="Add Buyer", color='blue')}}
+{%- endblock %}
 {%- block main %}
 <table data-sortable>
 	<thead>

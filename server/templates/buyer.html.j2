@@ -1,0 +1,18 @@
+{% extends "base.html.j2" %}
+{% set socket = True %}
+{% block main %}
+<form method="post">
+	<label for="name">Buyer name</label>
+	<input id="name" name="name" value="" type="text">
+	<label for="email">Email</label>
+	<input id="email" name="email" value="" type="email">
+	<input name="add" value="Add Buyer" type="submit">
+	<label for="card"><a id="card" href="javascript:card();">Add Card</a></label>
+</form>
+{% endblock %}
+{% block footer %}
+	{{- button("cancel", url="/items") }}
+{% endblock %}
+{% block script %}
+	<script src="{{url_for('static',filename='buyer.js')}}"></script>
+{% endblock %}

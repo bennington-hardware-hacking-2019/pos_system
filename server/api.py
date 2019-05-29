@@ -284,6 +284,24 @@ def stock(index):
 	else:
 		return redirect(url_for('login'))
 
+@app.route('/buyer', methods=["GET", "POST"])
+def buyer():
+	if 'admin' in session:
+		if request.method == 'POST':
+			if 'card' in session:
+				card = session['card']
+				session['card'] = None
+			else:
+				card = None
+			name = request.form['name']
+			email = request.form['email']
+			db.add_buyer(name, email, card)
+			return redirect(url_for('items'))
+		elif request.method == 'GET':
+			return render_template('buyer.html.j2')
+	else:
+		return redirect(url_for('login'))
+
 """
 	utils
 """
