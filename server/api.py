@@ -2,7 +2,6 @@
 
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 from flask_socketio import SocketIO
-from threading import Lock
 
 import time
 import eventlet
@@ -71,19 +70,12 @@ def checkout_request(payload):
 	# FIXME - sim
 	print("reading card")
 	card = card_reader.sim_read()
-	print("finish reading card: ", card)
+	print("finish reading card:", card)
 
 	# validate the card
 	if db.check_card(card):
-		# collect all the items
-		# items = db.get_items(tags)
-
-		# make sale
-		# db.make_sale(card, tags)
-
 		# send a payment confirmation request to the customer
 		card_info = db.get_buyer(card)
-		print(card_info)
 		name = card_info.get("name")
 		email = card_info.get("email")
 
@@ -136,7 +128,6 @@ def on_cart():
 
 @app.route('/checkout')
 def checkout():
-	print("===> checkout route, cart", cart)
 	return render_template("checkout.html.j2", cart=cart)
 
 @app.route('/help')
@@ -281,6 +272,10 @@ def stock(index):
 	else:
 		return redirect(url_for('login'))
 
+"""
+	utils
+"""
+
 def validate_tag():
 	"""keep reading for nfc tag item, validate, send it back to the ui"""
 	# set add_tag to True to keep reading from tag
@@ -291,7 +286,6 @@ def validate_tag():
 		try:
 			# check for a tag reading
 			# FIXME - sim
-			print("sim_read")
 			tag = tag_reader.sim_read()
 
 			# check if the item exists in the database
