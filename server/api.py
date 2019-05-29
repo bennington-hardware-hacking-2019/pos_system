@@ -55,7 +55,54 @@ def checkout_request(payload):
 	global cart
 	cart = payload.get("data")
 	print("===> cart:", cart)
-	socketio.start_background_task(validate_card(cart))
+
+	# tags is a list of tag reading values added in the cart
+	tags = []
+
+	# total is the total value of all items in the cart
+	total = 0
+	for k, v in cart.items():
+		# get rid of prefix $ and convert back to float
+		total += float(v.get("cost")[1:])
+		tags.append(v.get("tag"))
+
+	# wait for customer to tap their card
+	# FIXME - sim
+	print("reading card")
+
+	card = socketio.start_background_task(validate_card())
+
+	print("finish reading card:", card)
+
+	# validate the card
+	if db.check_card(card):
+		card_info = db.get_buyer(card)
+		name = card_info.get("name")
+		email = card_info.get("email")
+
+		# collect all the items
+		items = db.get_items(tags)
+
+		# make sale
+		db.make_sale(card, tags)
+
+		# send a confirmation request to the customer
+		# TODO - refer to #36. in short, frontend will make stripe payment
+		payment_info = {
+			"name": name,
+			"email": email,
+			"card": card,
+			"tags": tags,
+			"total": total,
+			"msg": "a payment link will be sent to " + name + " (" + email + ")"
+		}
+
+		print(payment_info)
+
+		# sleep for 5 seconds so that the websocket client is ready to listen again,
+		# since it takes sometimes to load into a different page
+		time.sleep(5);
+		socketio.emit('checkout_response', payment_info, namespace='/checkout')
 
 @socketio.on('tag_request', namespace='/tag')
 def tag_request():
@@ -293,53 +340,8 @@ def validate_tag():
 		finally:
 			pass
 
-def validate_card(cart):
-
-	# tags is a list of tag reading values added in the cart
-	tags = []
-
-	# total is the total value of all items in the cart
-	total = 0
-	for k, v in cart.items():
-		# get rid of prefix $ and convert back to float
-		total += float(v.get("cost")[1:])
-		tags.append(v.get("tag"))
-
-	# wait for customer to tap their card
-	# FIXME - sim
-	print("reading card")
-	card = card_reader.read()
-	print("finish reading card:", card)
-
-	# validate the card
-	if db.check_card(card):
-		card_info = db.get_buyer(card)
-		name = card_info.get("name")
-		email = card_info.get("email")
-
-		# collect all the items
-		items = db.get_items(tags)
-
-		# make sale
-		db.make_sale(card, tags)
-
-		# send a confirmation request to the customer
-		# TODO - refer to #36. in short, frontend will make stripe payment
-		payment_info = {
-			"name": name,
-			"email": email,
-			"card": card,
-			"tags": tags,
-			"total": total,
-			"msg": "a payment link will be sent to " + name + " (" + email + ")"
-		}
-
-		print(payment_info)
-
-		# sleep for 5 seconds so that the websocket client is ready to listen again,
-		# since it takes sometimes to load into a different page
-		time.sleep(5);
-		socketio.emit('checkout_response', payment_info, namespace='/checkout')
+def validate_card():
+	return card_reader.read()
 
 def start():
 	socketio.run(app, debug=True)
