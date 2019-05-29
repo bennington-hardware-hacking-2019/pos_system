@@ -70,7 +70,7 @@ def checkout_request(payload):
 	# FIXME - sim
 	print("reading card")
 
-	card = socketio.start_background_task(validate_card())
+	card = socketio.start_background_task(card_reader.read())
 
 	print("finish reading card:", card)
 
