@@ -6,11 +6,12 @@ Date: May 24, 2019
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+	object-fit: contain;
 }
 /* FIXME show me all elements */
-* { box-shadow: 0 0 0 1px hsla(210, 100%, 50%, 0.5) }
+/* * { box-shadow: 0 0 0 1px hsla(210, 100%, 50%, 0.5) }
 body:hover * { box-shadow: none }
-a { box-shadow: 0 0 0 1em lavender inset }
+a { box-shadow: 0 0 0 1em lavender inset } */
 /* end FIXME */
 html,
 body {
@@ -25,7 +26,7 @@ footer {
 	display: flex;
 	justify-content: space-evenly;
 	align-items: center;
-	overflow: scroll;
+	overflow: hidden;
 }
 header {
 	justify-content: center;
@@ -95,6 +96,7 @@ img {
 	padding: .5em;
 	max-width: 100%;
 	max-height: 100%;
+	object-fit: contain;
 }
 .ui {
 	font-family: Inconsolata, monospace;
