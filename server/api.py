@@ -108,7 +108,7 @@ def admin_tag_add_request():
 	tag_reader.sim_setup()
 	tag = tag_reader.sim_read()
 	session['added_tag'] = tag
-	socketio.of("/tag").emit('admin_tag_add_response', True)
+	socketio.emit('admin_tag_add_response', True, namespace='/tag')
 
 """
 	http routes
