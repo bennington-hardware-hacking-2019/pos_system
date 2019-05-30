@@ -1,0 +1,33 @@
+{% extends "items.html.j2" %}
+{%- block main %}
+<table data-sortable>
+	<thead>
+		<tr>
+			<th>name</th>
+			<th>description</th>
+			<th data-sortable-type="numeric">cost</th>
+			<th data-sortable-type="date">added</th>
+			<th data-sortable-type="date">sold</th>
+			<th data-sortable-type="date">paid</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for item in items %}
+		<tr>
+			<td>{{ item.name }}</td>
+			<td>{{item.description}}</td>
+			<td data-value="{{item.cost[1:]|replace(',','')}}">{{ item.cost }}</td>
+			<td data-value="{{item.date_added}}">{{item.date_added}}</td>
+			<td data-value="{{item.date_sold}}">{{item.date_sold}}</td>
+			<td data-value="{{item.date_paid}}">{{item.date_paid}}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}
+{%- block footer %}
+	{{- button("home", url="/logout", title="Logout")}}
+	{{- button("cart", url="/items", title="In Stock", color="brown")}}
+	{{- button("all", url="/items/held", title="Held Items", color="brown")}}
+	{{- button("add", url="/items/add", title="Add", color="blue") }}
+{%- endblock %}

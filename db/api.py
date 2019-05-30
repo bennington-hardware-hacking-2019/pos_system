@@ -30,23 +30,44 @@ class DB(object):
 			# print("db successfully validated: ", card)
 			return True
 
-	def check_stock(self, item_index):
+	def check_item(self, index):
 		"""
 		check if an item is in stock (admin)
 		"""
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-		# get the buyer
+		# get the stocked item
 		cur.execute(
 			"""
 			SELECT item_index
 			FROM stock
 			WHERE item_index = %s;
 			""",
-			(item_index,)
+			(index,)
 		)
 		result = cur.fetchone()
 		cur.close()
 		if result is not None:
+			return True
+		else:
+			return False
+
+	def check_sale(self, index):
+		"""
+		check if the sale has been paid
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		# get the stocked item
+		cur.execute(
+			"""
+			SELECT date_paid
+			FROM sale
+			WHERE index = %s;
+			""",
+			(index,)
+		)
+		date = cur.fetchone()
+		cur.close()
+		if date is not None and date is not '':
 			return True
 		else:
 			return False
@@ -71,30 +92,29 @@ class DB(object):
 		cur.close()
 		return buyer
 
-	def get_stock(self):
+	def add_buyer(self, name, email, card):
 		"""
-		get all in stock items
-		returns an array of item dictionaries
+		add buyer name, email and card
+		returns True
 		"""
-		# print("db is getting all in stock items")
 		# use psycopg extras to return a fancy dictionary for each row
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		# get the buyer
 		cur.execute(
 			"""
-			SELECT *
-			FROM item
-			JOIN stock
-			ON item.index = stock.item_index;
-			"""
+			INSERT INTO buyer
+			(name, email, card)
+			VALUES (%s, %s, %s)
+			""",
+			(name, email, card)
 		)
-		items = cur.fetchall()
+		self.conn.commit()
 		cur.close()
-		return items
+		return True
 
 	def get_items(self, tags):
 		"""
-		get items information
+		get items from tags
 		returns an array of item dictionaries
 		"""
 		items = []
@@ -104,7 +124,7 @@ class DB(object):
 
 	def get_item(self, tag):
 		"""
-		get item information
+		get item information from tag
 		returns an item dictionary
 		"""
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -122,9 +142,10 @@ class DB(object):
 		cur.close()
 		return item
 
+	# FIXME - this function is almost a repeat of get item — can they merge?
 	def get_item_by_index(self, index):
 		"""
-		get item information
+		get item information from index
 		returns an item dictionary
 		"""
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -140,23 +161,66 @@ class DB(object):
 		cur.close()
 		return item
 
-	def get_all_items(self):
+	# FIXME - this function is almost a repeat of get items — can they merge?
+	def get_stock(self):
 		"""
-		get all the items including out of stock
+		get all in stock items
 		returns an array of item dictionaries
 		"""
+		# print("db is getting all in stock items")
+		# use psycopg extras to return a fancy dictionary for each row
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		# get the buyer
 		cur.execute(
 			"""
-			SELECT index AS item_index, *
+			SELECT item.*
 			FROM item
+			JOIN stock
+			ON item.index = stock.item_index;
 			"""
 		)
 		items = cur.fetchall()
 		cur.close()
 		return items
 
-	def add_item(self, tag, name, desc, cost):
+	# FIXME - this function is almost a repeat of get items — can they merge?
+	def get_sold(self):
+		"""
+		get all the sold items
+		returns an array of item dictionaries
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			SELECT item.*, sale.date_added as date_sold, sale.date_paid
+			FROM item
+			JOIN sale
+			ON item.sale_index = sale.index
+			"""
+		)
+		items = cur.fetchall()
+		cur.close()
+		return items
+
+	# FIXME - this function is almost a repeat of get items — can they merge?
+	def get_held(self):
+		"""
+		get all the held items (items that aren't in stock, and aren't sold)
+		returns an array of item dictionaries
+		"""
+		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		cur.execute(
+			"""
+			SELECT *
+			FROM item
+			WHERE item.sale_index IS NULL AND item.index NOT IN (SELECT item_index FROM stock)
+			"""
+		)
+		items = cur.fetchall()
+		cur.close()
+		return items
+
+	def add_item(self, tag, name, desc, cost, in_stock=True):
 		"""
 		adds an item to the DB (for admin)
 		returns true if successful
@@ -165,23 +229,24 @@ class DB(object):
 		cur.execute(
 			"""
 			INSERT INTO item
-			(tag,item,description,cost)
+			(tag,name,description,cost)
 			VALUES
 			(%s,%s,%s,%s)
 			RETURNING index
 			""",
 			(tag,name,desc,cost)
 		)
-		item_index = cur.fetchone().get("index")
-		cur.execute(
-			"""
-			INSERT INTO stock
-			(item_index)
-			VALUES
-			(%s)
-			""",
-			(item_index,)
-		)
+		if in_stock:
+			item_index = cur.fetchone().get("index")
+			cur.execute(
+				"""
+				INSERT INTO stock
+				(item_index)
+				VALUES
+				(%s)
+				""",
+				(item_index,)
+			)
 		self.conn.commit()
 		cur.close()
 		return True
@@ -195,7 +260,7 @@ class DB(object):
 		cur.execute(
 			"""
 			UPDATE item
-			SET (item,description,cost) = (%s,%s,%s)
+			SET (name,description,cost) = (%s,%s,%s)
 			WHERE index = (%s)
 			""",
 			(name,desc,cost,index)
@@ -204,9 +269,9 @@ class DB(object):
 		cur.close()
 		return True
 
-	def unstock_item(self, index):
+	def hold_item(self, index):
 		"""
-		removes an item from stock (for admin)
+		removes an item from stock but doesn't delete it (for admin)
 		returns true if successful
 		"""
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -221,7 +286,7 @@ class DB(object):
 		cur.close()
 		return True
 
-	def restock_item(self, index):
+	def stock_item(self, index):
 		"""
 		moves an item to stock (for admin)
 		returns true if successful
@@ -233,7 +298,7 @@ class DB(object):
 			(item_index)
 			VALUES (%s)
 			""",
-			(index)
+			(index,)
 		)
 		self.conn.commit()
 		cur.close()
@@ -263,8 +328,6 @@ class DB(object):
 			""",
 			(sale_index, tag,)
 		)
-
-		# update stock once the item is sold
 		item_index = cur.fetchone().get("index")
 		cur.execute(
 			"""
@@ -282,16 +345,16 @@ class DB(object):
 		create a sale of items
 		returns a sale dictionary
 		"""
-		bennington_id = int(self.get_buyer(card).get("bennington_id"))
+		card = int(self.get_buyer(card).get("card"))
 		cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cur.execute(
 			"""
 			INSERT INTO sale (
-				bennington_id
+				card
 			) VALUES (%s)
                 RETURNING index;
 			""",
-			(bennington_id,)
+			(card,)
 		)
 		sale = cur.fetchone()
 		self.sell_items(tags, sale.get("index"))

@@ -68,7 +68,7 @@ Column    |            Type             | Collation | Nullable |               D
 -------------|-----------------------------|-----------|----------|-------------------------------------|----------|--------------|-------------
 index       | integer                     |           | not null | nextval('item_index_seq'::regclass) | plain    |              |
 tag         | integer[]                   |           | not null |                                     | extended |              |
-item        | character varying(255)      |           | not null |                                     | extended |              |
+name        | character varying(255)      |           | not null |                                     | extended |              |
 description | character varying(255)      |           |          |                                     | extended |              |
 cost        | money                       |           | not null |                                     | plain    |              |
 date_added  | timestamp without time zone |           | not null | CURRENT_TIMESTAMP                   | plain    |              |

@@ -2,57 +2,24 @@
 {% set socket = True %}
 {% set size = '-s' %}
 {% block main %}
-<section>
-	<h1>Tap items on the <em>tag_reader</em> to add them to your cart</h1>
-	<div class="container" id="cart"></div>
-	<div class="container" id="checkout"></div>
+<h2 id="tutorial">Tap <strong>TAPA tags</strong> on the <em>tag_reader</em> to add items to your cart</h2>
+<section id="cart">
+{% if cart is defined %}
+{% for index, item in cart.items() %}
+	<div class="item" id="{{ item.index }}">
+	<h2>{{ item.name }}</h2>
+	<p>{{ item.description }}</p>
+	<h3 class="ui">{{ item.cost }}</h3>
+	</div>
+{% endfor %}
+{% endif %}
 </section>
-<script>
-		var socket = io.connect('http://' + document.domain + ':' + location.port);
-
-		// refer to id cart and checkout button above
-		var $cart = $('#cart');
-		var $checkout = $('#checkout');
-
-		// dictionary to hold checkout items
-		var checkout_payload = {}
-
-		// verify our websocket connection is established
-		socket.on('connect', function() {
-				console.log('websocket connected!');
-		});
-
-		// send data over `server request` channel
-		function add_to_cart_request() {
-				socket.emit('add_to_cart_request', {msg: 'add_to_cart_request'});
-		}
-
-		// send data over `server request` channel
-		function checkout_request() {
-				socket.emit('checkout_request', {data: checkout_payload});
-		}
-
-		// receive data on `add_to_cart_response` channel
-		socket.on('add_to_cart_response', function(payload) {
-				// update to the ui
-				$cart.append('<div class="ui black">' + payload.item + ' - ' + payload.cost + '</div>');
-
-				// add to checkout dictionary
-				checkout_payload[payload.item] = payload.cost
-				console.log(payload);
-		});
-
-		// receive data on `checkout_response` channel
-		socket.on('checkout_response', function(payload) {
-				$checkout.append('<br>');
-				$checkout.append('<div class="ui brown">' + payload.msg + '</div>');
-				console.log(payload);
-		});
-</script>
 {% endblock %}
 {% block footer %}
 	{{- button("cancel", url="/") }}
-	{{- button("remove", url="#", title="Remove Items", color="brown") }}
-	{{- button("pay", url="javascript:add_to_cart_request()", color="blue") }}
-	{{- button("pay", url="javascript:checkout_request()", color="blue") }}
+	{{- button("remove", url="javascript:remove()", title="Remove Selected Items", color="brown") }}
+	{{- button("pay", url="javascript:checkout()", title="Checkout", color="blue") }}
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename='cart.js') }}"></script>
 {% endblock %}

@@ -2,20 +2,20 @@
 {% block main %}
 <form method="post">
 	<label for="item">Item name</label>
-	<input name="item" value="{{item.item}}" type="text">
-	<label for="desc">description</label>
-	<input name="desc" value="{{item.description}}" type="text">
-	<label for="cost">cost</label>
-	<input name="cost" value="{{item.cost[1:]|replace(',','')|float()}}" type="number" step="0.01" min="0">
-	<input name="update" value="Update" type="submit">
+	<input id="item" name="item" value="{{item.name}}" type="text">
+	<label for="desc">Description</label>
+	<input id="desc" name="desc" value="{{item.description}}" type="text">
+	<label for="cost">Cost</label>
+	<input id="cost" name="cost" value="{{item.cost[1:]|replace(',','')}}" type="number" step="0.01" min="0.00" max="1000.00">
+	<input name="update" value="Update Item" type="submit">
 </form>
 {% endblock %}
 {% block footer %}
-{% if stock %}
-	{{- button("cancel", url="/stock") }}
-	{{- button("remove", url="/stock/un/%s"|format(item.index), title="Unstock", color="brown")}}
+{% if in_stock %}
+	{{- button("cancel", url="/items") }}
+	{{- button("all", url="/items/hold/%s"|format(item.index), title="Hold", color="brown")}}
 {% else %}
-	{{- button("cancel", url="/stock/all") }}
-	{{- button("add", url="/stock/re/%s"|format(item.index), title="Restock", color="blue")}}
+	{{- button("cancel", url="/items") }}
+	{{- button("add", url="/items/stock/%s"|format(item.index), title="Restock", color="blue")}}
 {% endif %}
 {% endblock %}

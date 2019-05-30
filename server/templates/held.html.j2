@@ -1,0 +1,7 @@
+{% extends "items.html.j2" %}
+{%- block footer %}
+	{{- button("home", url="/logout", title="Logout")}}
+	{{- button("cart", url="/items", title="In Stock", color="brown")}}
+	{{- button("pay", url="/items/sold", title="Sold Items", color="blue")}}
+	{{- button("add", url="/items/add", title="Add", color="blue") }}
+{%- endblock %}

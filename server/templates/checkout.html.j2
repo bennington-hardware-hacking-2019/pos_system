@@ -1,0 +1,36 @@
+{% extends "base.html.j2" %}
+{% set socket = True %}
+{% set size = '-s' %}
+{% block head %}
+	<link rel="stylesheet" href="{{ url_for('static', filename='sortable-theme-minimal.css') }}">
+	<script src="{{ url_for('static', filename='sortable.min.js') }}"></script>
+{% endblock %}
+{%- block main %}
+<h2>Tap your <strong>Bennington Id</strong> on the <em>card_reader</em> to get a payment link</h2>
+<table data-sortable>
+	<thead>
+		<tr>
+			<th>name</th>
+			<th>description</th>
+			<th data-sortable-type="numeric">cost</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for index, item in cart.items() %}
+		<tr>
+			<td>{{ item.name }}</td>
+			<td>{{ item.description }}</td>
+			<td>{{ item.cost }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<section id="checkout"></section>
+{% endblock %}
+{% block footer %}
+	{{- button("edit", url="/cart", title="Edit Cart", color="brown") }}
+	{{- button("pay", url="/receipt", title="Pay", color="blue") }}
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename='checkout.js') }}"></script>
+{% endblock %}

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# FIXME - sim
 # from RPi.GPIO import *
 import time
 
@@ -62,5 +61,5 @@ class Wiegand(object):
 
 	def sim_read(self):
 		"""FIXME - simulate reading, only used for testing purposes"""
-		time.sleep(1)
+		time.sleep(rest)
 		return 7114
