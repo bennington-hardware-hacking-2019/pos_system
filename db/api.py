@@ -352,7 +352,7 @@ class DB(object):
 			INSERT INTO sale (
 				card
 			) VALUES (%s)
-                        RETURNING index;
+                RETURNING index;
 			""",
 			(card,)
 		)
