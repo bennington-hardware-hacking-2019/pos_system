@@ -1,6 +1,6 @@
 # pos_system
 
-![](checkout_demo.gif)
+![](demo.gif)
 
 ## Installing
 
