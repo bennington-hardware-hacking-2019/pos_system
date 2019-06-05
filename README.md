@@ -1,5 +1,7 @@
 # pos_system
 
+![](checkout-demo.gif)
+
 ## Installing
 
 To install necessary development tools:
