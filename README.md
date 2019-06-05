@@ -6,7 +6,15 @@
 
 ## Using
 
-> TODO
+First,
+```
+make db-setup && make run
+```
+
+Second, access
+```
+http://127.0.0.1:5000
+```
 
 ## Developing
 
@@ -15,11 +23,11 @@ To install necessary development tools:
 make init
 ```
 
-To setup postgres with pre-populated data (mainly used for testing):
+To setup postgres with pre-populated data. Used for initial setup and testing
+mostly.
 ```
 make db-setup
 ```
-> Use `make run` to simulate a simple flow.
 
 To run test
 ```
