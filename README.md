@@ -2,7 +2,10 @@
 
 ## Installing
 
-> TODO
+To install necessary development tools:
+```
+make init
+```
 
 ## Using
 
@@ -17,11 +20,6 @@ http://127.0.0.1:5000
 ```
 
 ## Developing
-
-To install necessary development tools:
-```
-make init
-```
 
 To setup postgres with pre-populated data. Used for initial setup and testing
 mostly.
