@@ -5,7 +5,15 @@ For Bennington College Thrift and Public Apparel (TAPA)
 
 ## Purpose
 
-Our goal is to develop an automated point of sale system using near field communications for the Bennington College campus thrift store (TAPA). We hope that this POS system will help re-establish TAPA by easing the burden of managing inventory and potentially eliminating the expense of employing cashiers.
+Our goal is to develop an automated point of sale system using near field communications for the Bennington College campus thrift store (TAPA).
+We hope that this POS system will help re-establish TAPA by easing the burden of managing inventory and potentially eliminating the expense of employing cashiers.
+
+## High-level architecture
+
+![](architecture.jpg)
+
+For more details, please visit the [design
+doc](https://docs.google.com/document/d/1uPikHsPxjA35MsOq9hkEmXJNQbgH-Svp_8UPdOPB1fI/edit?usp=sharing).
 
 ## Installing
 
