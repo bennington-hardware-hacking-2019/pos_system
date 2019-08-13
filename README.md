@@ -1,5 +1,4 @@
-# Near Field Communications (NFC) based Point of Sale (POS) System
-For Bennington College Thrift and Public Apparel (TAPA)
+# Customized Raspberry Pi based Point Of Sale System 
 
 ![](demo.gif)
 
