@@ -1,4 +1,4 @@
-# Customized Raspberry Pi based Point Of Sale System 
+# Automated Point of Sale System using NFC
 
 ![](demo.gif)
 
