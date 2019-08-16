@@ -11,13 +11,13 @@ We hope that this POS system will help re-establish TAPA by easing the burden of
 
 ![](architecture.jpg)
 
-- NFC Reader (ISO Format): Read tags.
-- NFC Reader (HID Format): Read Bennington IDs.
-- Controller: Runs the Backend and User Interface.
-- Monitor: 7” touch screen with stand and mount for Controller.
-- Database: Store user information, inventory items and transaction details.
-- Backend: Prepare transactions, validate transactions using Stripe/Venmo API, update Controller.
-- User Interface: A locally hosted web interface for buyers to view, manage, and checkout items in the Cart. Also an admin interface for managing inventory
+- [NFC Reader (ISO Format):](tag_reader) Read tags.
+- [NFC Reader (HID Format):](card_reader) Read Bennington IDs.
+- [Controller:](server) Runs the Backend and User Interface.
+- **Monitor:** 7” touch screen with stand and mount for Controller.
+- [Database:](db) Store user information, inventory items and transaction details.
+- [Backend:](server) Prepare transactions, validate transactions using Stripe/Venmo API, update Controller.
+- [User Interface:](server) A locally hosted web interface for buyers to view, manage, and checkout items in the Cart. Also an admin interface for managing inventory
 
 For more details, please visit the [design
 doc](https://docs.google.com/document/d/1uPikHsPxjA35MsOq9hkEmXJNQbgH-Svp_8UPdOPB1fI/edit?usp=sharing).
